@@ -1,14 +1,50 @@
-import cv2
+import cv2, numpy as np, pygame as pg
 
 # Capturing video through webcam
 webcam = cv2.VideoCapture(0)
 
+color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
+              'white': [[180, 18, 255], [0, 0, 231]],
+              'red1': [[180, 255, 255], [159, 50, 70]],
+              'red2': [[9, 255, 255], [0, 50, 70]],
+              'green': [[89, 255, 255], [36, 50, 70]],
+              'blue': [[128, 255, 255], [90, 50, 70]],
+              'yellow': [[35, 255, 255], [25, 50, 70]],
+              'purple': [[158, 255, 255], [129, 50, 70]],
+              'orange': [[24, 255, 255], [10, 50, 70]],
+              'gray': [[180, 18, 230], [0, 0, 40]]}
+
 # attempt to track number of colors in the image
 nb_colors = 0
 
+
+#initialization of clock to measure time 
+pg.init()
+
+clk = pg.time.Clock()
+time = 0
+
+
+# color detection
+
+def color_dtct(a):
+
+    # [red,Blue,purple,green,yellow]
+
+    if a[0]:
+        return "Red"
+    if a[1]:
+        return "Blue"
+    if a[2]:
+        return "Purple"
+    if a[3]:
+        return "Green"
+    if a[4]:
+        return "Yellow"
+
 # Start a while loop
 while (1):
-
+    clk.tick()
     # Reading the video from the
     # webcam in image frames
     _, imageFrame = webcam.read()
@@ -156,6 +192,7 @@ while (1):
     for pic, contour in enumerate(contours):
         area = cv2.contourArea(contour)
         if (area > 1500):
+            yellow = 1
             x, y, w, h = cv2.boundingRect(contour)
             imageFrame = cv2.rectangle(imageFrame, (x, y),
                                        (x + w, y + h),
@@ -183,8 +220,17 @@ while (1):
                         1.0, (255, 0, 255))
 
     nb_colors = red + Blue + purple + green + yellow
-    print(nb_colors)
+    colors = [red,Blue,purple,green,yellow]
 
+    single_color = (1 if nb_colors==1 else 0)
+    #print(nb_colors)
+    if single_color:
+        time += clk.get_time()
+    elif not single_color:
+        time = 0
+    print(time)
+    if single_color and time>=5000:
+        print(color_dtct(colors))
 
     # Program Termination
     cv2.imshow("Multiple Color Detection in Real-TIme", imageFrame)
