@@ -31,7 +31,7 @@ def do_segmentation():
         # low = np.array([0, 42, 0])
         # high = np.array([179, 255, 255])
         # mask = cv2.inRange(hsv_frame, low, high)
-        result = cv2.bitwise_and(frame, frame, mask=mask)
+        # result = cv2.bitwise_and(frame, frame, mask=mask)
 
         cv2.imshow("Frame", frame)
         cv2.imshow("Red", red)
