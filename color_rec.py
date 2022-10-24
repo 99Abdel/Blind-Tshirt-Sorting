@@ -1,3 +1,5 @@
+import math
+
 import cv2, numpy as np, pygame as pg
 
 # Capturing video through webcam
@@ -54,6 +56,8 @@ while (1):
     # HSV(hue-saturation-value)
     # color space
     hsvFrame = cv2.cvtColor(imageFrame, cv2.COLOR_BGR2HSV)
+    rgbFrame = cv2.cvtColor(imageFrame, cv2.COLOR_BGR2RGB)
+    brightness = np.sqrt(0.241*pow(rgbFrame[0, :, 0],2) + 0.691*pow(rgbFrame[0, :, 1],2) + 0.068*pow(rgbFrame[0, :, 2],2))
 
     # Set range for red color 1 and
     # define mask
@@ -229,7 +233,7 @@ while (1):
     elif not single_color:
         time = 0
     print(time)
-    if single_color and time>=5000:
+    if single_color and time>=10000:
         print(color_dtct(colors))
 
     # Program Termination
