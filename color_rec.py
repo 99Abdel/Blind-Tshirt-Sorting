@@ -2,25 +2,25 @@ import math
 
 import cv2, numpy as np, pygame as pg
 from tshirt import *
+
 # Capturing video through webcam
 webcam = cv2.VideoCapture(0)
 
 color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
-              'white': [[180, 18, 255], [0, 0, 231]],
-              'red1': [[180, 255, 255], [159, 50, 70]],
-              'red2': [[9, 255, 255], [0, 50, 70]],
-              'green': [[89, 255, 255], [36, 50, 70]],
-              'blue': [[128, 255, 255], [90, 50, 70]],
-              'yellow': [[35, 255, 255], [25, 50, 70]],
-              'purple': [[158, 255, 255], [129, 50, 70]],
-              'orange': [[24, 255, 255], [10, 50, 70]],
-              'gray': [[180, 18, 230], [0, 0, 40]]}
+                  'white': [[180, 18, 255], [0, 0, 231]],
+                  'red1': [[180, 255, 255], [159, 50, 70]],
+                  'red2': [[9, 255, 255], [0, 50, 70]],
+                  'green': [[89, 255, 255], [36, 50, 70]],
+                  'blue': [[128, 255, 255], [90, 50, 70]],
+                  'yellow': [[35, 255, 255], [25, 50, 70]],
+                  'purple': [[158, 255, 255], [129, 50, 70]],
+                  'orange': [[24, 255, 255], [10, 50, 70]],
+                  'gray': [[180, 18, 230], [0, 0, 40]]}
 
 # attempt to track number of colors in the image
 nb_colors = 0
 
-
-#initialization of clock to measure time 
+# initialization of clock to measure time
 pg.init()
 
 clk = pg.time.Clock()
@@ -30,7 +30,6 @@ time = 0
 # color detection
 
 def color_dtct(a):
-
     # [red,Blue,purple,green,yellow]
 
     if a[0]:
@@ -43,6 +42,7 @@ def color_dtct(a):
         return "Green"
     if a[4]:
         return "Yellow"
+
 
 # Start a while loop
 while (1):
@@ -57,7 +57,7 @@ while (1):
     # color space
     hsvFrame = cv2.cvtColor(imageFrame, cv2.COLOR_BGR2HSV)
     rgbFrame = cv2.cvtColor(imageFrame, cv2.COLOR_BGR2RGB)
-    #brightness = np.sqrt(0.241*pow(rgbFrame[0, :, 0],2) + 0.691*pow(rgbFrame[0, :, 1],2) + 0.068*pow(rgbFrame[0, :, 2],2))
+    # brightness = np.sqrt(0.241*pow(rgbFrame[0, :, 0],2) + 0.691*pow(rgbFrame[0, :, 1],2) + 0.068*pow(rgbFrame[0, :, 2],2))
 
     # Set range for red color 1 and
     # define mask
@@ -104,11 +104,11 @@ while (1):
     # For red color
     red_mask1 = cv2.dilate(red1_mask, kernal)
     res_red1 = cv2.bitwise_and(imageFrame, imageFrame,
-                              mask=red_mask1)
+                               mask=red_mask1)
 
     red_mask2 = cv2.dilate(red2_mask, kernal)
     res_red2 = cv2.bitwise_and(imageFrame, imageFrame,
-                              mask=red_mask2)
+                               mask=red_mask2)
 
     # For green color
     green_mask = cv2.dilate(green_mask, kernal)
@@ -123,13 +123,12 @@ while (1):
     # For yellow color
     yellow_mask = cv2.dilate(yellow_mask, kernal)
     res_yellow = cv2.bitwise_and(imageFrame, imageFrame,
-                                   mask=yellow_mask)
+                                 mask=yellow_mask)
 
     # For purple color
     purple_mask = cv2.dilate(purple_mask, kernal)
     res_purple = cv2.bitwise_and(imageFrame, imageFrame,
-                                   mask=purple_mask)
-
+                                 mask=purple_mask)
 
     # Creating contour to track red color
     contours, hierarchy = cv2.findContours(red_mask,
@@ -228,15 +227,15 @@ while (1):
     nb_colors = red + Blue + purple + green + yellow
     colors = [red, Blue, purple, green, yellow]
 
-    single_color = (1 if nb_colors==1 else 0)
-    #print(nb_colors)
+    single_color = (1 if nb_colors == 1 else 0)
+    # print(nb_colors)
     if single_color:
         time += clk.get_time()
     elif not single_color:
         time = 0
     print(time)
-    if single_color and time>=2000:
-        thshirt = Tshirt(hsvFrame[0, -1, 0], hsvFrame[0, -1, 1],hsvFrame[0, -1, 2],color_dtct(colors))
+    if single_color and time >= 2000:
+        thshirt = Tshirt(hsvFrame[0, -1, 0], hsvFrame[0, -1, 1], hsvFrame[0, -1, 2], color_dtct(colors))
         print(color_dtct(colors))
 
     # Program Termination
