@@ -11,8 +11,8 @@ class Tshirt:
         self.main_colour = colour
 
     def compute_brightness(self):
-        (r, g, b) = colorsys.hsv_to_rgb(self.h, self.s, self.v)
-        self.brightness = np.sqrt(0.241 * pow(r, 2) + 0.691 * pow(g, 2) + 0.068 * pow(b, 2))
+        (r, g, b) = colorsys.hsv_to_rgb(self.h/255, self.s/255, self.v/255)
+        self.brightness = np.sqrt(0.241 * pow(r*255, 2) + 0.691 * pow(g*255, 2) + 0.068 * pow(b*255, 2))
 
     def get_brightness(self):
         return self.brightness

@@ -1,7 +1,7 @@
 import math
 
 import cv2, numpy as np, pygame as pg
-
+from tshirt import *
 # Capturing video through webcam
 webcam = cv2.VideoCapture(0)
 
@@ -141,9 +141,11 @@ while (1):
     green = 0
     purple = 0
     yellow = 0
+    detectable_area = 30000
+
     for pic, contour in enumerate(contours):
         area = cv2.contourArea(contour)
-        if (area > 1500):
+        if (area > detectable_area):
             red = 1
             x, y, w, h = cv2.boundingRect(contour)
             imageFrame = cv2.rectangle(imageFrame, (x, y),
@@ -161,7 +163,7 @@ while (1):
 
     for pic, contour in enumerate(contours):
         area = cv2.contourArea(contour)
-        if (area > 1500):
+        if (area > detectable_area):
             green = 1
             x, y, w, h = cv2.boundingRect(contour)
             imageFrame = cv2.rectangle(imageFrame, (x, y),
@@ -178,7 +180,7 @@ while (1):
                                            cv2.CHAIN_APPROX_SIMPLE)
     for pic, contour in enumerate(contours):
         area = cv2.contourArea(contour)
-        if (area > 1500):
+        if (area > detectable_area):
             Blue = 1
             x, y, w, h = cv2.boundingRect(contour)
             imageFrame = cv2.rectangle(imageFrame, (x, y),
@@ -195,7 +197,7 @@ while (1):
                                            cv2.CHAIN_APPROX_SIMPLE)
     for pic, contour in enumerate(contours):
         area = cv2.contourArea(contour)
-        if (area > 1500):
+        if (area > detectable_area):
             yellow = 1
             x, y, w, h = cv2.boundingRect(contour)
             imageFrame = cv2.rectangle(imageFrame, (x, y),
@@ -212,7 +214,7 @@ while (1):
                                            cv2.CHAIN_APPROX_SIMPLE)
     for pic, contour in enumerate(contours):
         area = cv2.contourArea(contour)
-        if (area > 1500):
+        if (area > detectable_area):
             purple = 1
             x, y, w, h = cv2.boundingRect(contour)
             imageFrame = cv2.rectangle(imageFrame, (x, y),
@@ -224,7 +226,7 @@ while (1):
                         1.0, (255, 0, 255))
 
     nb_colors = red + Blue + purple + green + yellow
-    colors = [red,Blue,purple,green,yellow]
+    colors = [red, Blue, purple, green, yellow]
 
     single_color = (1 if nb_colors==1 else 0)
     #print(nb_colors)
@@ -233,7 +235,8 @@ while (1):
     elif not single_color:
         time = 0
     print(time)
-    if single_color and time>=10000:
+    if single_color and time>=2000:
+        thshirt = Tshirt(hsvFrame[0, -1, 0], hsvFrame[0, -1, 1],hsvFrame[0, -1, 2],color_dtct(colors))
         print(color_dtct(colors))
 
     # Program Termination
