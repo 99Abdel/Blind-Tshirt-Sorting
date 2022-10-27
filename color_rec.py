@@ -57,7 +57,7 @@ while (1):
     # color space
     hsvFrame = cv2.cvtColor(imageFrame, cv2.COLOR_BGR2HSV)
     rgbFrame = cv2.cvtColor(imageFrame, cv2.COLOR_BGR2RGB)
-    brightness = np.sqrt(0.241*pow(rgbFrame[0, :, 0],2) + 0.691*pow(rgbFrame[0, :, 1],2) + 0.068*pow(rgbFrame[0, :, 2],2))
+    #brightness = np.sqrt(0.241*pow(rgbFrame[0, :, 0],2) + 0.691*pow(rgbFrame[0, :, 1],2) + 0.068*pow(rgbFrame[0, :, 2],2))
 
     # Set range for red color 1 and
     # define mask
