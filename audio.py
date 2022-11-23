@@ -155,6 +155,6 @@ def make_sentence(color, position, group, nb_shirts):
 
 # make_sentence(color, position, group, nb_shirts)
 
-res = make_sentence("Red",1,1,3)
-print(res)
-os.system(res)
+# res = make_sentence("Red",1,1,3)
+# print(res)
+# os.system(res)

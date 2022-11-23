@@ -1,5 +1,5 @@
 import cv2, numpy as np, pygame as pg
-
+from audio import *
 # Capturing video through webcam
 webcam = cv2.VideoCapture(0)
 
@@ -228,9 +228,19 @@ while (1):
         time += clk.get_time()
     elif not single_color:
         time = 0
+        msg = 0 
     print(time)
     if single_color and time>=5000:
         print(color_dtct(colors))
+        msg += 1
+        if msg == 1:
+            print("hsv \n")
+            print(hsvFrame)
+            res = make_sentence(color_dtct(colors),1,1,3)
+            print(res)
+            os.system(res)
+
+
 
     # Program Termination
     cv2.imshow("Multiple Color Detection in Real-TIme", imageFrame)
