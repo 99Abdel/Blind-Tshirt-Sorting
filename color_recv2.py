@@ -1,3 +1,4 @@
+import cap
 import cv2, numpy as np, pygame as pg
 from audio import *
 # Capturing video through webcam

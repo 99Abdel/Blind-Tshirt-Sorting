@@ -4,9 +4,9 @@ import pygame as pg
 from tshirt import *
 
 # image constant utilities
-RESOLUTION = 640*480
-UP_LIM = RESOLUTION*0.3
-LOW_LIM = RESOLUTION*0.01
+RESOLUTION = 640 * 480
+UP_LIM = RESOLUTION * 0.3
+LOW_LIM = RESOLUTION * 0.01
 
 # initialization of clock to measure time
 SETTLING_TIME = 2000
@@ -19,8 +19,7 @@ cap = cv2.VideoCapture(0)
 kernel = np.ones((10, 10), np.uint8)
 
 
-def color_frame_morpho(hsv_frame,frame,low,high,kernel):
-
+def color_frame_morpho(hsv_frame, frame, low, high, kernel):
     # mask
     color_mask = cv2.inRange(hsv_frame, low, high)
     color = cv2.bitwise_and(frame, frame, mask=color_mask)
@@ -31,11 +30,10 @@ def color_frame_morpho(hsv_frame,frame,low,high,kernel):
 
     color_closed_npixel = np.count_nonzero(color_mask_closing)
 
-    return color,color_closed,color_closed_npixel
+    return color, color_closed, color_closed_npixel
 
 
-def show_frames(frame,color1_closed,color2_closed,f_name,c1_name,c2_name):
-
+def show_frames(frame, color1_closed, color2_closed, f_name, c1_name, c2_name):
     cv2.imshow(f_name, frame)
     cv2.imshow(c1_name, red_closed)
     cv2.imshow(c2_name, blue_closed)
@@ -65,28 +63,27 @@ while True:
     low_blue = np.array([94, 80, 2])
     high_blue = np.array([126, 255, 255])
 
-    [red,red_closed,red_closed_npixel] = color_frame_morpho(hsv_frame,frame,low_red,high_red,kernel)
+    [red, red_closed, red_closed_npixel] = color_frame_morpho(hsv_frame, frame, low_red, high_red, kernel)
     [blue, blue_closed, blue_closed_npixel] = color_frame_morpho(hsv_frame, frame, low_blue, high_blue, kernel)
 
-    show_frames(frame,red_closed,blue_closed,"Frame","Red","Blue")
+    show_frames(frame, red_closed, blue_closed, "Frame", "Red", "Blue")
 
-    if(red_closed_npixel > UP_LIM and blue_closed_npixel < LOW_LIM):
+    if (red_closed_npixel > UP_LIM and blue_closed_npixel < LOW_LIM):
         time += clk.get_time()
         c = "RED"
-    elif(blue_closed_npixel > UP_LIM and red_closed_npixel < LOW_LIM):
+    elif (blue_closed_npixel > UP_LIM and red_closed_npixel < LOW_LIM):
         time += clk.get_time()
         c = "BLUE"
     else:
         time = 0
         c = ""
 
-    #print(time)
+    # print(time)
 
     if c != "" and time >= SETTLING_TIME:
         # DO A MEAN OF THE HSV_FRAME COLUMNS BEFORE CREATING A TSHIRT CLASS.
         tshirt = Tshirt(hsv_frame[0, -1, 0], hsv_frame[0, -1, 1], hsv_frame[0, -1, 2], c)
         print(c)
-
 
     key = cv2.waitKey(1)
 
