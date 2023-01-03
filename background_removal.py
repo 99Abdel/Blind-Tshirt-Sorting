@@ -43,7 +43,7 @@ while(cap.isOpened()):
     erosion = cv2.erode(dframe, kernel, iterations=1)
     cleaned = morphology.remove_small_objects(erosion, min_size=150, connectivity=150)
 
-    n_pixel = np.sum(cleaned)
+    n_pixel = np.sum(cleaned)/np.size(cleaned)
     print(n_pixel)
     # Display image
     cv2.imshow('frame2', cleaned)
