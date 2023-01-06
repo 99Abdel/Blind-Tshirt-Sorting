@@ -25,7 +25,6 @@ def show_frames(frame, color1_closed, color2_closed, f_name, c1_name, c2_name):
 
 
 
-
 color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
                   'white': [[180, 18, 255], [0, 0, 231]],
                   'red1': [[180, 255, 255], [159, 50, 70]],
