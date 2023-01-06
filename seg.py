@@ -16,7 +16,7 @@ clk = pg.time.Clock()
 time = 0
 
 # open cv initialization
-cap = cv2.VideoCapture(0)
+cap = cv2.imread("")
 kernel = np.ones((10, 10), np.uint8)
 
 
@@ -59,6 +59,10 @@ while True:
     # Red color
     low_red = np.array([161, 155, 84])
     high_red = np.array([179, 255, 255])
+
+    # Orange color
+    low_red = np.array([10, 50, 70])
+    high_red = np.array([24, 255, 255])
 
     # Blue color
     low_blue = np.array([94, 80, 2])
