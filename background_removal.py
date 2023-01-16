@@ -172,6 +172,7 @@ while (cap.isOpened()):
         original_keys = set(original_tshirt_dictionary.keys())
         new_keys = set(new_tshirt_dictionary.keys())
 
+
         if (len(original_keys) - len(new_keys)) == 1:
             if time_seconds < 8 and len(original_keys) != 1:
                 original_tshirt_dictionary.popitem()
@@ -190,7 +191,6 @@ while (cap.isOpened()):
                     list_tshirt_group2.append(tshirt)
                     list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                     index = list_tshirt_group2.index(tshirt)
-
             time_seconds = 0
 
         if len(original_keys) == 1 and flag_first_tshirt:
@@ -206,6 +206,7 @@ while (cap.isOpened()):
                 index = list_tshirt_group2.index(tshirt)
             time_seconds = 0
 
+
         time_seconds = end - start
         frame_color = cv2.putText(frame_color, ('W/B Perc. : %.2f' % white_pixel_percentage), (900, 50), font, fontScale,color, thickness, cv2.LINE_AA)
         frame_color = cv2.putText(frame_color, ('Time: %.2f' % time_seconds), (900, 80), font, fontScale, color,thickness, cv2.LINE_AA)
@@ -217,7 +218,6 @@ while (cap.isOpened()):
 
         index = -1
         for x in original_tshirt_dictionary.keys():
-            # print(x + " => " + str(tshirt_dictionary[x]))
             index += 1
             y_pos1 = 50 + 60*index
             org = (50, y_pos1)
