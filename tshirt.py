@@ -1,7 +1,7 @@
 import numpy as np
 import colorsys
 class Tshirt:
-    def __init__(self, h, s, v, colour):
+    def __init__(self, h, s, v, colour, colour_group):
         self.h = h
         self.s = s
         self.v = v
@@ -9,6 +9,7 @@ class Tshirt:
         self.brightness = 0
         self.compute_brightness()
         self.main_colour = colour
+        self.colour_group = colour_group # 0 if it is from the first group color, 1 otherwise
 
     def compute_brightness(self):
         (r, g, b) = colorsys.hsv_to_rgb(self.h/255, self.s/255, self.v/255)
