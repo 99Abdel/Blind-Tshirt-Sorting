@@ -57,13 +57,15 @@ fontScale = 1
 color = (0, 0, 0)
 # Line thickness of 2 px
 thickness = 2
-
+flag_first_tshirt = True
 flag_new_tshirt_added = False
 flag_enough_time_passed = True
 time_seconds = 0
+list_tshirt_group1 = []
+list_tshirt_group2 = []
 
 # Open Video
-cap = cv2.VideoCapture('video_test/blue.mp4')
+cap = cv2.VideoCapture('video_test/unsorted.mp4')
 
 # Randomly select 25 frames
 frameIds = cap.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
@@ -143,22 +145,22 @@ while (cap.isOpened()):
                     if (red_closed_npixel > UP_LIM and blue_closed_npixel < LOW_LIM):
                         orange_tshirt_number += 1
                         color_name = 'ORANGE' + str(orange_tshirt_number)
-                        print('ORANGE')
                     elif (blue_closed_npixel > UP_LIM and red_closed_npixel < LOW_LIM):
                         blue_tshirt_number += 1
                         color_name = 'BLUE' + str(blue_tshirt_number)
-                        print('BLUE')
                     else:
                         color_name = 'None'
 
                     if color_name != 'None':
                         # DO A MEAN OF THE HSV_FRAME COLUMNS BEFORE CREATING A TSHIRT CLASS.
-                        tshirt = Tshirt(hsv_frame[0, -1, 0], hsv_frame[0, -1, 1], hsv_frame[0, -1, 2], color_name)
+                        if 'BLUE' in color_name:
+                            tshirt_temp = Tshirt(hsv_frame[0, -1, 0], hsv_frame[0, -1, 1], hsv_frame[0, -1, 2], color_name,0)
+                        elif 'ORANGE' in color_name:
+                            tshirt_temp = Tshirt(hsv_frame[0, -1, 0], hsv_frame[0, -1, 1], hsv_frame[0, -1, 2], color_name,1)
 
                         if color_name not in original_tshirt_dictionary.keys():
-                            original_tshirt_dictionary[color_name] = tshirt.brightness
+                            original_tshirt_dictionary[color_name] = tshirt_temp.brightness
 
-                        print("Color Brighteness: " + str(tshirt.brightness))
                     frame_list = []
                 else:
                     frame_list = []
@@ -171,14 +173,40 @@ while (cap.isOpened()):
         original_keys = set(original_tshirt_dictionary.keys())
         new_keys = set(new_tshirt_dictionary.keys())
 
-        if (len(original_keys) - len(new_keys)) == 1 or len(original_keys) == 1:
+        if (len(original_keys) - len(new_keys)) == 1:
             if time_seconds < 8 and len(original_keys) != 1:
                 original_tshirt_dictionary.popitem()
                 if 'BLUE' in color_name:
                     blue_tshirt_number -= 1
                 elif 'ORANGE' in color_name:
                     orange_tshirt_number -= 1
+            elif time_seconds > 8 and len(original_keys) != 1:
+                tshirt = tshirt_temp
+                if 'BLUE' in color_name:
+                    list_tshirt_group1.append(tshirt)
+                    list_tshirt_group1 = sorted(list_tshirt_group1, key=lambda x: x.brightness)
+                    index = list_tshirt_group1.index(tshirt)
+                    
+                elif 'ORANGE' in color_name:
+                    list_tshirt_group2.append(tshirt)
+                    list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
+                    index = list_tshirt_group2.index(tshirt)
+
             time_seconds = 0
+
+        if len(original_keys) == 1 and flag_first_tshirt:
+            flag_first_tshirt = False
+            tshirt = tshirt_temp
+            if 'BLUE' in color_name:
+                list_tshirt_group1.append(tshirt)
+                list_tshirt_group1 = sorted(list_tshirt_group1,key=lambda x: x.brightness)
+                index = list_tshirt_group1.index(tshirt)
+            elif 'ORANGE' in color_name:
+                list_tshirt_group2.append(tshirt)
+                list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
+                index = list_tshirt_group2.index(tshirt)
+            time_seconds = 0
+
         time_seconds = end - start
         frame_color = cv2.putText(frame_color, ('W/B Perc. : %.2f' % white_pixel_percentage), (900, 50), font, fontScale,color, thickness, cv2.LINE_AA)
         frame_color = cv2.putText(frame_color, ('Time: %.2f' % time_seconds), (900, 80), font, fontScale, color,thickness, cv2.LINE_AA)
@@ -206,7 +234,7 @@ while (cap.isOpened()):
         # Display image
         cv2.imshow('frame2', frame_color)
         n_pixel = 0
-        key = cv2.waitKey(20)
+        key = cv2.waitKey(150)
         if key == ord('q'):
             break
     else:
