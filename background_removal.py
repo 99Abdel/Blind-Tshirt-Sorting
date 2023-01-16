@@ -6,6 +6,7 @@ import time
 from audio import make_sentence
 from Segmentation import segmentation
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
+from dynamic_removal import remove_background
 
 color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
                   'white': [[180, 18, 255], [0, 0, 231]],
@@ -23,7 +24,7 @@ UP_LIM = RESOLUTION * 0.3
 LOW_LIM = RESOLUTION * 0.01
 
 N_FRAME = 5
-FRAME_TOLL = 5
+FRAME_TOLL = 10
 WHITE_THRESHOLD = 20
 
 WAIT_TIME = 8
@@ -67,6 +68,8 @@ isBackgroudRemovalFineshed = False
 orange_percentage = 0
 blue_percentage = 0
 
+
+
 start = time.time()
 # Loop over all frames
 while (cap.isOpened()):
@@ -80,9 +83,10 @@ while (cap.isOpened()):
         frame = cv2.cvtColor(frame_color, cv2.COLOR_BGR2GRAY)
 
         BW_frame = segmentor.removeBG(frame_color, (0, 0, 0), threshold=0.7)
-        kernel = np.ones((10, 10), "uint8")
+        kernel = np.ones((2, 2), "uint8")
         erosion = cv2.erode(BW_frame, kernel, iterations=1)
-        cleaned = morphology.remove_small_objects(erosion, min_size=150, connectivity=150)
+        cleaned = erosion
+            #morphology.remove_small_objects(erosion, min_size=150, connectivity=150)
         white_pixel_percentage = np.sum(cleaned) / np.size(cleaned)
 
         if white_pixel_percentage > WHITE_THRESHOLD:
@@ -96,10 +100,10 @@ while (cap.isOpened()):
 
                     [orange_percentage, blue_percentage] = segmentation(hsv_frame, cleaned)
 
-                    if orange_percentage > 40 and blue_percentage < 10:
+                    if orange_percentage > 30 and blue_percentage < 10:
                         orange_tshirt_number += 1
                         color_name = 'ORANGE' + str(orange_tshirt_number)
-                    elif blue_percentage > 40 and orange_percentage < 10:
+                    elif blue_percentage > 30 and orange_percentage < 10:
                         blue_tshirt_number += 1
                         color_name = 'BLUE' + str(blue_tshirt_number)
                     else:
@@ -140,13 +144,12 @@ while (cap.isOpened()):
                     list_tshirt_group1 = sorted(list_tshirt_group1, key=lambda x: x.brightness)
                     index = list_tshirt_group1.index(tshirt)
                     frase = make_sentence("BLUE", index, tshirt.colour_group, len(list_tshirt_group1) - 1)
-
                 elif 'ORANGE' in color_name:
                     list_tshirt_group2.append(tshirt)
                     list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                     index = list_tshirt_group2.index(tshirt)
                     frase = make_sentence("ORANGE", index, tshirt.colour_group, len(list_tshirt_group2) - 1)
-            time_seconds = 0
+                time_seconds = 0
 
         if len(original_keys) == 1 and flag_first_tshirt:
             flag_first_tshirt = False
@@ -168,7 +171,7 @@ while (cap.isOpened()):
                                   fontScale, color, thickness, cv2.LINE_AA)
         cleaned = cv2.putText(cleaned, ('Time: %.2f' % time_seconds), (900, 80), font, fontScale, color,
                                   thickness, cv2.LINE_AA)
-        cleaned = cv2.putText(cleaned, ('Blue: %.2f' % blue_percentage + 'Orange: %.2f' % orange_percentage), (900, 110), font, fontScale, color,
+        cleaned = cv2.putText(cleaned, ('Blue: %.2f' % blue_percentage + ' Orange: %.2f' % orange_percentage), (900, 110), font, fontScale, color,
                                   thickness, cv2.LINE_AA)
         cleaned = cv2.putText(cleaned, start_segmentation_text, (1600, 110), font, 4, color, 3, cv2.LINE_AA)
         new_tshirt_dictionary = original_tshirt_dictionary.copy()
@@ -193,7 +196,7 @@ while (cap.isOpened()):
         # Display image
         cv2.imshow('frame2', cleaned)
         n_pixel = 0
-        key = cv2.waitKey(50)
+        key = cv2.waitKey(200)
         if key == ord('q'):
             break
     else:

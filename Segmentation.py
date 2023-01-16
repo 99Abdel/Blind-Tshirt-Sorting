@@ -32,13 +32,13 @@ def segmentation(hsv_frame, frame):
     high_red = np.array([50, 255, 255])
 
     # Blue color
-    low_blue = np.array([94, 80, 2])
-    high_blue = np.array([126, 255, 255])
+    low_blue = np.array([70, 10, 2])
+    high_blue = np.array([130, 255, 255])
 
     [red, red_closed, red_closed_npixel] = color_frame_morpho(hsv_frame, frame, low_red, high_red, kernel)
     [blue, blue_closed, blue_closed_npixel] = color_frame_morpho(hsv_frame, frame, low_blue, high_blue, kernel)
 
-    #show_frames(frame, red_closed, blue_closed, "Frame", "Red", "Blue")
+    # show_frames(frame, red_closed, blue_closed, "Frame", "Red", "Blue")
 
     orange_percentage = np.sum(red_closed) / np.size(red_closed)
     blue_percentage = np.sum(blue_closed) / np.size(blue_closed)
