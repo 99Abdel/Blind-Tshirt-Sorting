@@ -19,11 +19,11 @@ def color_frame_morpho(hsv_frame, frame, low, high, kernel):
 
     return color, color_closed, color_closed_npixel
 
+
 def show_frames(frame, color1_closed, color2_closed, f_name, c1_name, c2_name):
     cv2.imshow(f_name, frame)
     cv2.imshow(c1_name, color1_closed)
     cv2.imshow(c2_name, color2_closed)
-
 
 
 color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
@@ -45,6 +45,8 @@ N_FRAME = 10
 FRAME_TOLL = 2
 WHITE_THRESHOLD = 20
 
+WAIT_TIME = 8
+
 # Text print parameters
 # font
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -64,6 +66,12 @@ list_tshirt_group2 = []
 
 # Open Video
 cap = cv2.VideoCapture('video_test/unsorted.mp4')
+
+# Open Camera
+#cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+#cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+#
 
 # Randomly select 25 frames
 frameIds = cap.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
@@ -110,7 +118,6 @@ while (cap.isOpened()):
         # Calculate absolute difference of current frame and
         # the median frame
 
-
         dframe = cv2.absdiff(frame, grayMedianFrame)
         # Treshold to binarize
         th, dframe = cv2.threshold(dframe, 60, 255, cv2.THRESH_BINARY)
@@ -123,7 +130,7 @@ while (cap.isOpened()):
             frame_list.append(white_pixel_percentage)
             if len(frame_list) >= N_FRAME:
 
-                if abs(max(frame_list)-min(frame_list)) < FRAME_TOLL:
+                if abs(max(frame_list) - min(frame_list)) < FRAME_TOLL:
                     start_segmentation_text = 'F'
                     # time.sleep(0.5)
                     start = time.time()
@@ -135,8 +142,10 @@ while (cap.isOpened()):
                     low_blue = np.array([94, 80, 2])
                     high_blue = np.array([126, 255, 255])
 
-                    [red, red_closed, red_closed_npixel] = color_frame_morpho(hsv_frame, frame_color, low_orange, high_orange, kernel)
-                    [blue, blue_closed, blue_closed_npixel] = color_frame_morpho(hsv_frame, frame_color, low_blue, high_blue, kernel)
+                    [red, red_closed, red_closed_npixel] = color_frame_morpho(hsv_frame, frame_color, low_orange,
+                                                                              high_orange, kernel)
+                    [blue, blue_closed, blue_closed_npixel] = color_frame_morpho(hsv_frame, frame_color, low_blue,
+                                                                                 high_blue, kernel)
                     # uncomment to see the different color in a window
                     # show_frames(frame, red_closed, blue_closed, "Frame", "Orange", "Blue")
 
@@ -152,9 +161,11 @@ while (cap.isOpened()):
                     if color_name != 'None':
                         # DO A MEAN OF THE HSV_FRAME COLUMNS BEFORE CREATING A TSHIRT CLASS.
                         if 'BLUE' in color_name:
-                            tshirt_temp = Tshirt(hsv_frame[0, -1, 0], hsv_frame[0, -1, 1], hsv_frame[0, -1, 2], color_name,0)
+                            tshirt_temp = Tshirt(hsv_frame[0, -1, 0], hsv_frame[0, -1, 1], hsv_frame[0, -1, 2],
+                                                 color_name, 0)
                         elif 'ORANGE' in color_name:
-                            tshirt_temp = Tshirt(hsv_frame[0, -1, 0], hsv_frame[0, -1, 1], hsv_frame[0, -1, 2], color_name,1)
+                            tshirt_temp = Tshirt(hsv_frame[0, -1, 0], hsv_frame[0, -1, 1], hsv_frame[0, -1, 2],
+                                                 color_name, 1)
 
                         if color_name not in original_tshirt_dictionary.keys():
                             original_tshirt_dictionary[color_name] = tshirt_temp.brightness
@@ -167,30 +178,29 @@ while (cap.isOpened()):
 
         end = time.time()
 
-
         original_keys = set(original_tshirt_dictionary.keys())
         new_keys = set(new_tshirt_dictionary.keys())
 
-
         if (len(original_keys) - len(new_keys)) == 1:
-            if time_seconds < 8 and len(original_keys) != 1:
+            if time_seconds < WAIT_TIME and len(original_keys) != 1:
                 original_tshirt_dictionary.popitem()
                 if 'BLUE' in color_name:
                     blue_tshirt_number -= 1
                 elif 'ORANGE' in color_name:
                     orange_tshirt_number -= 1
-            elif time_seconds > 8 and len(original_keys) != 1:
+            elif time_seconds > WAIT_TIME and len(original_keys) != 1:
                 tshirt = tshirt_temp
                 if 'BLUE' in color_name:
                     list_tshirt_group1.append(tshirt)
                     list_tshirt_group1 = sorted(list_tshirt_group1, key=lambda x: x.brightness)
                     index = list_tshirt_group1.index(tshirt)
+                    frase = make_sentence("BLUE", index, tshirt.colour_group, len(list_tshirt_group1) - 1)
 
-                    
                 elif 'ORANGE' in color_name:
                     list_tshirt_group2.append(tshirt)
                     list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                     index = list_tshirt_group2.index(tshirt)
+                    frase = make_sentence("ORANGE", index, tshirt.colour_group, len(list_tshirt_group2) - 1)
             time_seconds = 0
 
         if len(original_keys) == 1 and flag_first_tshirt:
@@ -198,21 +208,22 @@ while (cap.isOpened()):
             tshirt = tshirt_temp
             if 'BLUE' in color_name:
                 list_tshirt_group1.append(tshirt)
-                list_tshirt_group1 = sorted(list_tshirt_group1,key=lambda x: x.brightness)
+                list_tshirt_group1 = sorted(list_tshirt_group1, key=lambda x: x.brightness)
                 index = list_tshirt_group1.index(tshirt)
-                frase = make_sentence("BLUE", index, tshirt.colour_group, len(list_tshirt_group1))
+                frase = make_sentence("BLUE", index, tshirt.colour_group, len(list_tshirt_group1) - 1)
             elif 'ORANGE' in color_name:
                 list_tshirt_group2.append(tshirt)
                 list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                 index = list_tshirt_group2.index(tshirt)
-                frase = make_sentence("ORANGE", index, tshirt.colour_group, len(list_tshirt_group2))
+                frase = make_sentence("ORANGE", index, tshirt.colour_group, len(list_tshirt_group2) - 1)
             time_seconds = 0
 
-
         time_seconds = end - start
-        frame_color = cv2.putText(frame_color, ('W/B Perc. : %.2f' % white_pixel_percentage), (900, 50), font, fontScale,color, thickness, cv2.LINE_AA)
-        frame_color = cv2.putText(frame_color, ('Time: %.2f' % time_seconds), (900, 80), font, fontScale, color,thickness, cv2.LINE_AA)
-        frame_color = cv2.putText(frame_color, start_segmentation_text, (1600, 110), font, 4, color, 3 ,cv2.LINE_AA)
+        frame_color = cv2.putText(frame_color, ('W/B Perc. : %.2f' % white_pixel_percentage), (900, 50), font,
+                                  fontScale, color, thickness, cv2.LINE_AA)
+        frame_color = cv2.putText(frame_color, ('Time: %.2f' % time_seconds), (900, 80), font, fontScale, color,
+                                  thickness, cv2.LINE_AA)
+        frame_color = cv2.putText(frame_color, start_segmentation_text, (1600, 110), font, 4, color, 3, cv2.LINE_AA)
         new_tshirt_dictionary = original_tshirt_dictionary.copy()
 
         if time_seconds > 0.5:
@@ -221,13 +232,13 @@ while (cap.isOpened()):
         index = -1
         for x in original_tshirt_dictionary.keys():
             index += 1
-            y_pos1 = 50 + 60*index
+            y_pos1 = 50 + 60 * index
             org = (50, y_pos1)
             text_to_print = 'Color Recognized: ' + x
             # Using cv2.putText() method
             frame_color = cv2.putText(frame_color, text_to_print, org, font, fontScale, color, thickness, cv2.LINE_AA)
 
-            y_pos2 = 80 + 60*index
+            y_pos2 = 80 + 60 * index
             org = (50, y_pos2)
             text_to_print = 'Brightness: ' + ('%.2f' % original_tshirt_dictionary[x])
             frame_color = cv2.putText(frame_color, text_to_print, org, font, fontScale, color, thickness, cv2.LINE_AA)

@@ -1,3 +1,4 @@
+import pygame
 from gtts import gTTS
 
 import os
@@ -58,16 +59,16 @@ colors = {
 # Left = path + "To_the_left_of.mp3"
 
 
-def make_sentence(color, position, group, nb_shirts):
+def make_sentence(color, position , group, nb_shirts):
     res = "mpg321 " + path + "color.mp3 " + colors[color] + " "
+    position += 1
+    # message for positioning
 
-    # message for positionning
-
-    # group of tshirts that will be on the left of the hanger
+    # group of t-shirts that will be on the left of the hanger
 
     if group == 0:
 
-        # no tshirts already on hanger
+        # no t-shirts already on hanger
         if nb_shirts == 0:
             res = res + " " + left + " " + the + " " + hanger
 
@@ -139,6 +140,8 @@ def make_sentence(color, position, group, nb_shirts):
 
             if position == 1:
                 res += left + " " + positions[3] + " " + tshirt + " " + start + " " + the + " " + Right
+
+    os.system(res)
 
     return res
 
