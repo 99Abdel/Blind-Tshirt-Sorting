@@ -45,12 +45,12 @@ positions = {
 
 colors = {
 
-    "Red": path + "Red.mp3",
-    "Blue": path + "Blue.mp3",
-    "Green": path + "Green.mp3",
-    "Yellow": path + "Yellow.mp3",
-    "Purple": path + "Purple.mp3",
-    "Orange": path + "Orange.mp3"
+    "RED": path + "Red.mp3",
+    "BLUE": path + "Blue.mp3",
+    "GREEN": path + "Green.mp3",
+    "YELLOW": path + "Yellow.mp3",
+    "PURPLE": path + "Purple.mp3",
+    "ORANGE": path + "Orange.mp3"
 }
 
 
@@ -144,6 +144,6 @@ def make_sentence(color, position, group, nb_shirts):
 
 # make_sentence(color, position, group, nb_shirts)
 
-# res = make_sentence("Red",1,1,3)
-# print(res)
-# os.system(res)
+res = make_sentence("RED",1,1,3)
+print(res)
+os.system(res)

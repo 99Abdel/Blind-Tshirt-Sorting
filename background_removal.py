@@ -1,10 +1,9 @@
 import numpy as np
 import cv2
 from tshirt import Tshirt
-from skimage import data, filters
 from skimage import morphology
 import time
-import pygame as pg
+from audio import make_sentence
 
 
 def color_frame_morpho(hsv_frame, frame, low, high, kernel):
@@ -186,6 +185,7 @@ while (cap.isOpened()):
                     list_tshirt_group1.append(tshirt)
                     list_tshirt_group1 = sorted(list_tshirt_group1, key=lambda x: x.brightness)
                     index = list_tshirt_group1.index(tshirt)
+
                     
                 elif 'ORANGE' in color_name:
                     list_tshirt_group2.append(tshirt)
@@ -200,10 +200,12 @@ while (cap.isOpened()):
                 list_tshirt_group1.append(tshirt)
                 list_tshirt_group1 = sorted(list_tshirt_group1,key=lambda x: x.brightness)
                 index = list_tshirt_group1.index(tshirt)
+                frase = make_sentence("BLUE", index, tshirt.colour_group, len(list_tshirt_group1))
             elif 'ORANGE' in color_name:
                 list_tshirt_group2.append(tshirt)
                 list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                 index = list_tshirt_group2.index(tshirt)
+                frase = make_sentence("ORANGE", index, tshirt.colour_group, len(list_tshirt_group2))
             time_seconds = 0
 
 
@@ -233,7 +235,7 @@ while (cap.isOpened()):
         # Display image
         cv2.imshow('frame2', frame_color)
         n_pixel = 0
-        key = cv2.waitKey(150)
+        key = cv2.waitKey(10)
         if key == ord('q'):
             break
     else:
