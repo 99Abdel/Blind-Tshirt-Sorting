@@ -1,7 +1,11 @@
-import pygame
+import pygame as pg
 from gtts import gTTS
 
-import os
+import os 
+pg.mixer.init()
+pg.mixer.music.set_volume(1.0)
+# if os.name == 'nt' : 
+#     import vlc
 
 mytext = 'Left'
 path = "./audio_samples/"
@@ -60,7 +64,7 @@ colors = {
 
 
 def make_sentence(color, position , group, nb_shirts):
-    res = "mpg321 " + path + "color.mp3 " + colors[color] + " "
+    res = ("mpg321" if (os.name!='nt') else "")  + path + "color.mp3 " + colors[color] + " "
     position += 1
     # message for positioning
 
@@ -141,12 +145,25 @@ def make_sentence(color, position , group, nb_shirts):
             if position == 1:
                 res += left + " " + positions[3] + " " + tshirt + " " + start + " " + the + " " + Right
 
-    os.system(res)
+    if os.name == 'nt':
+        #ws.PlaySound()
+        res_w = res.split()
+        for sound in res_w:
+            # if pg.mixer.music.get_busy():
+            #     pg.mixer.music.queue(sound)
+            pg.mixer.music.load(sound)
+            pg.mixer.music.play()
+            pg.time.wait(1200)
+
+            
+
+    else:
+        os.system(res)
 
     return res
 
 # make_sentence(color, position, group, nb_shirts)
 
-# res = make_sentence("RED",1,1,3)
+res = make_sentence("RED",1,1,3)
 # print(res)
 # os.system(res)
