@@ -1,0 +1,8 @@
+cap==0.0.114
+cvzone==1.5.6
+gTTS==2.2.4
+matplotlib==3.6.0
+numpy==1.23.4
+opencv_python==4.6.0.66
+pygame==2.1.2
+skimage==0.0

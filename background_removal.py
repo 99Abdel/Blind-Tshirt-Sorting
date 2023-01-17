@@ -69,7 +69,6 @@ orange_percentage = 0
 blue_percentage = 0
 
 
-
 start = time.time()
 # Loop over all frames
 while (cap.isOpened()):
