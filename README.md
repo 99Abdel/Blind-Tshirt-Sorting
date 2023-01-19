@@ -21,6 +21,10 @@ _Course of Designing Mechatronic System Coordinated by Fabien Verité_
 
 <img src="https://user-images.githubusercontent.com/47824890/213506874-16201128-3250-4c21-adf6-4f93361fd6d3.png" data-canonical-src="https://user-images.githubusercontent.com/47824890/213506874-16201128-3250-4c21-adf6-4f93361fd6d3.png" width="60%"/>
 
+ _Pilots must take the colours from the clothesline on the left and hang them on the clothesline on the right. At the end of the task the colours must be sorted by base 
+colour and within each base colour by brightness._
+
+  
 <!----------------------------------------------------------------------------->
 
 [andrea]: https://github.com/gianandry
