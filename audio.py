@@ -4,10 +4,9 @@ from gtts import gTTS
 import os 
 pg.mixer.init()
 pg.mixer.music.set_volume(1.0)
-# if os.name == 'nt' : 
-#     import vlc
 
-mytext = 'Left'
+
+mytext = 'Power on'
 path = "./audio_samples/"
 # Language in which you want to convert
 language = 'en'
@@ -16,11 +15,11 @@ language = 'en'
 # here we have marked slow=False. Which tells 
 # the module that the converted audio should 
 # have a high speed
-myobj = gTTS(text=mytext, lang=language, slow=False)
+#myobj = gTTS(text=mytext, lang=language, slow=False)
 
 # Saving the converted audio in a mp3 file named
 # welcome 
-myobj.save(path + "Left.mp3")
+#myobj.save(path + "PowerOn.mp3")
 
 # Playing the converted file
 
@@ -28,7 +27,7 @@ myobj.save(path + "Left.mp3")
 
 # mpg321 ./audio_samples/color.mp3 ./audio_sample3s/color.mp3
 
-
+start_message = path + "PowerOn.mp3"
 the = path + "the.mp3"
 left = path + "To_the_left_of.mp3"
 right = path + "To_the_right_of.mp3"
@@ -61,6 +60,15 @@ colors = {
 
 # Right = path + "To_the_right_of.mp3"
 # Left = path + "To_the_left_of.mp3"
+
+def startMessage():
+    if os.name == 'nt':
+        pg.mixer.music.load(start_message)
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+
+    else:
+        os.system("mpg321"+ start_message)
 
 
 def make_sentence(color, position , group, nb_shirts):
@@ -164,6 +172,7 @@ def make_sentence(color, position , group, nb_shirts):
 
 # make_sentence(color, position, group, nb_shirts)
 
-#res = make_sentence("RED",1,1,3)
+# res = make_sentence("RED",1,1,3)
 # print(res)
 # os.system(res)
+# startMessage()
