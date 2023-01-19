@@ -4,7 +4,7 @@
 
 # T-shirt Color sorting for Blind People
 
-_Welcome to the CYBATHLON Vision Assistance Race repository! Here you will find the code for a race that helps blind people identify and sort different colors according to their brightness. Without assistance, this task can be difficult for individuals with visual impairments, but it is important in many aspects of daily life, such as selecting color-matching clothes._ <br>
+_Welcome to the CYBATHLON Vision Assistance Race repository! Here you will find the code for a race that helps blind people identify and sort different colors according to their brightness._ <br>
 _Course of Designing Mechatronic System Coordinated by Fabien Verité_
 
 <br>
