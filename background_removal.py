@@ -6,7 +6,16 @@ import time
 from audio import make_sentence, startMessage
 from Segmentation import segmentation
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
-from dynamic_removal import remove_background
+import bluetooth
+
+bd_addr = "00:11:22:33:44:55" # Replace with the MAC address of the Bluetooth device you want to check
+
+result = bluetooth.lookup_name(bd_addr)
+if (result != None):
+    print("Bluetooth device found with address ", result)
+else:
+    print("Bluetooth device not found.")
+
 
 color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
                   'white': [[180, 18, 255], [0, 0, 231]],
@@ -72,7 +81,17 @@ blue_percentage = 0
 start = time.time()
 # Loop over all frames
 
-bluetooth = True
+bluetooth = False
+
+bd_addr = "00:11:22:33:44:55" # Replace with the MAC address of the Bluetooth device you want to check
+
+result = bluetooth.lookup_name(bd_addr)
+if (result != None):
+    print("Bluetooth device found with address ", result)
+    bluetooth = True
+else:
+    print("Bluetooth device not found.")
+
 
 if bluetooth and cap.isOpened():
 
