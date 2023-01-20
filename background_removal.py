@@ -72,9 +72,9 @@ blue_percentage = 0
 start = time.time()
 # Loop over all frames
 
-bluethoot = True
+bluetooth = True
 
-if bluethoot and cap.isOpened():
+if bluetooth and cap.isOpened():
 
     startMessage()
 
