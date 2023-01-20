@@ -12,7 +12,7 @@ def voice():
         print("Talk")
         # Use the built-in noise reduction
         r.adjust_for_ambient_noise(source)
-        
+
         audio_text = r.listen(source)
         print("Time over, thanks")
 
@@ -103,7 +103,7 @@ while (cap.isOpened()):
     # and the second is frame
     ret, frame_color = cap.read()
 
-    user_voice = voice()
+    #user_voice = voice()
 
     if ret == True:
         # Convert frame to hsv

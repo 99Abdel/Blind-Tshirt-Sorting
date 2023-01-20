@@ -1,0 +1,30 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          mypythonscript
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start my python script at boot time
+# Description:       Enable service provided by my script.
+### END INIT INFO
+
+dir="/Desktop/Blind-Tshirt-Sorting"
+cmd="python background_removal.py"
+
+case "$1" in
+    start)
+    echo "Starting autostart_tshirt"
+    cd $dir
+    $cmd &
+    ;;
+    stop)
+    echo "Stopping autostart_tshirt"
+    pkill -f "python background_removal.py"
+    ;;
+    *)
+    echo "Usage: /etc/init.d/autostart_tshirt {start|stop}"
+    exit 1
+    ;;
+esac
+exit 0

@@ -68,11 +68,11 @@ def startMessage():
         pg.time.wait(1200)
 
     else:
-        os.system("mpg321"+ start_message)
+        os.system("mpg321 "+ start_message)
 
 
 def make_sentence(color, position , group, nb_shirts):
-    res = ("mpg321" if (os.name!='nt') else "")  + path + "color.mp3 " + colors[color] + " "
+    res = ("mpg321 " if (os.name!='nt') else "")  + path + "color.mp3 " + colors[color] + " "
     position += 1
     # message for positioning
 
