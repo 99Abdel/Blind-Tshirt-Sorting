@@ -6,7 +6,7 @@ pg.mixer.init()
 pg.mixer.music.set_volume(1.0)
 
 
-mytext = 'color'
+mytext = "An error has occurred, please repeat from the beginning"
 path = "./audio_samples/"
 # Language in which you want to convert
 language = 'en'
@@ -15,29 +15,28 @@ language = 'en'
 # here we have marked slow=False. Which tells 
 # the module that the converted audio should 
 # have a high speed
+
+
+
+
 myobj = gTTS(text=mytext, lang=language, slow=False)
 
 # Saving the converted audio in a mp3 file named
 # welcome 
-myobj.save(path + "color_simple.mp3")
+myobj.save(path + "error.mp3")
 
 # Playing the converted file
 
 # os.system("mpg321 "+path+"Left.mp3")
 
 # mpg321 ./audio_samples/color.mp3 ./audio_sample3s/color.mp3
+
 color = path + "color_simple.mp3"
 to_sort = path + "to_sort.mp3"
 choose = path + "Choose.mp3"
 
-
+selected =path + "selected.mp3"
 start_message = path + "PowerOn.mp3"
-move_message = path + ""
-found_color_message = path + ""
-apology_message = path + ""
-task_finished_message = path + ""
-error_message = path + ""
-
 
 
 the = path + "the.mp3"
@@ -49,6 +48,8 @@ hanger = path + "Hanger.mp3"
 start = path + "Starting_from.mp3"
 Right = path + "Right.mp3"
 Left = path + "Left.mp3"
+
+# add_apology = 'Sorry I didnt get you, can you repeat?'.split()
 
 positions = {
 
@@ -94,16 +95,15 @@ def colorSel(pos):
 
 ## To do
 def move_order():
-    "Joseph do it here"
     if os.name == 'nt':
-        pg.mixer.music.load(move_message)
+        pg.mixer.music.load(path+"move.mp3")
         pg.mixer.music.play()
         pg.time.wait(1200)
     else:
-        os.system("mpg321 "+ move_message)
+        os.system("mpg321 "+ path+"move.mp3")
 
-def found_color():
-    "Joseph do it here"
+def found_color(col):
+    found_color_message = the+" "+color+" "+selected+ " " +colors[col]
     if os.name == 'nt':
         pg.mixer.music.load(found_color_message)
         pg.mixer.music.play()
@@ -112,31 +112,29 @@ def found_color():
         os.system("mpg321 "+ found_color_message)
 
 def apology():
-    "Joseph do it here"
+    sorry = path+"Sorry.mp3"
     if os.name == 'nt':
-        pg.mixer.music.load(apology_message)
+        pg.mixer.music.load(sorry)
         pg.mixer.music.play()
         pg.time.wait(1200)
     else:
-        os.system("mpg321 "+ apology_message)
+        os.system("mpg321 "+ sorry)
 
-def task_finishedd():
-    "Joseph do it here"
+def task_finished():
     if os.name == 'nt':
-        pg.mixer.music.load(task_finished_message)
+        pg.mixer.music.load(path + "Finished.mp3")
         pg.mixer.music.play()
         pg.time.wait(1200)
     else:
-        os.system("mpg321 "+ task_finished_message)
+        os.system("mpg321 "+ path + "Finished.mp3")
 
 def error():
-    "Joseph do it here"
     if os.name == 'nt':
-        pg.mixer.music.load(error_message)
+        pg.mixer.music.load(path+"error.mp3")
         pg.mixer.music.play()
         pg.time.wait(1200)
     else:
-        os.system("mpg321 "+ error_message)
+        os.system("mpg321 "+ path+"error.mp3")
 
 
 def make_sentence(color, position , group, nb_shirts):
@@ -245,4 +243,4 @@ def make_sentence(color, position , group, nb_shirts):
 # res = make_sentence("RED",1,1,3)
 # print(res)
 # os.system(res)
-# startMessage()
+# error()
