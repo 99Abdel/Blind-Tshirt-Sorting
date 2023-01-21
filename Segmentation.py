@@ -19,29 +19,21 @@ def color_frame_morpho(hsv_frame, frame, low, high, kernel):
     return color, color_closed, color_closed_npixel
 
 
-def show_frames(frame, color1_closed, color2_closed, f_name, c1_name, c2_name):
+def show_frames(frame, c1_closed, c2_closed, f_name, c1_name, c2_name):
     cv2.imshow(f_name, frame)
-    cv2.imshow(c1_name, color1_closed)
-    cv2.imshow(c2_name, color2_closed)
+    cv2.imshow(c1_name, c1_closed)
+    cv2.imshow(c2_name, c2_closed)
 
 
-def segmentation(hsv_frame, frame):
+def segmentation(hsv_frame, frame,low_c1, high_c1, low_c2, high_c2):
 
-    # Red color
-    low_red = np.array([5, 50, 70])
-    high_red = np.array([50, 255, 255])
-
-    # Blue color
-    low_blue = np.array([70, 10, 2])
-    high_blue = np.array([130, 255, 255])
-
-    [red, red_closed, red_closed_npixel] = color_frame_morpho(hsv_frame, frame, low_red, high_red, kernel)
-    [blue, blue_closed, blue_closed_npixel] = color_frame_morpho(hsv_frame, frame, low_blue, high_blue, kernel)
+    [c1, c1_closed, c1_closed_npixel] = color_frame_morpho(hsv_frame, frame, low_c1, high_c1, kernel)
+    [c2, c2_closed, c2_closed_npixel] = color_frame_morpho(hsv_frame, frame, low_c2, high_c2, kernel)
 
     # show_frames(frame, red_closed, blue_closed, "Frame", "Red", "Blue")
 
-    orange_percentage = np.sum(red_closed) / np.size(red_closed)
-    blue_percentage = np.sum(blue_closed) / np.size(blue_closed)
+    orange_percentage = np.sum(c1_closed) / np.size(c1_closed)
+    blue_percentage = np.sum(c2_closed) / np.size(c2_closed)
 
     return orange_percentage, blue_percentage
 
