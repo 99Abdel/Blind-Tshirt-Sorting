@@ -29,7 +29,17 @@ myobj.save(path + "color_simple.mp3")
 color = path + "color_simple.mp3"
 to_sort = path + "to_sort.mp3"
 choose = path + "Choose.mp3"
+
+
 start_message = path + "PowerOn.mp3"
+move_message = path + ""
+found_color_message = path + ""
+apology_message = path + ""
+task_finished_message = path + ""
+error_message = path + ""
+
+
+
 the = path + "the.mp3"
 left = path + "To_the_left_of.mp3"
 right = path + "To_the_right_of.mp3"
@@ -50,13 +60,12 @@ positions = {
 }
 
 colors = {
-
-    "RED": path + "Red.mp3",
-    "BLUE": path + "Blue.mp3",
-    "GREEN": path + "Green.mp3",
-    "YELLOW": path + "Yellow.mp3",
-    "PURPLE": path + "Purple.mp3",
-    "ORANGE": path + "Orange.mp3"
+    "red": path + "Red.mp3",
+    "blue": path + "Blue.mp3",
+    "green": path + "Green.mp3",
+    "yellow": path + "Yellow.mp3",
+    "purple": path + "Purple.mp3",
+    "orange": path + "Orange.mp3"
 }
 
 
@@ -72,6 +81,7 @@ def startMessage():
     else:
         os.system("mpg321 "+ start_message)
 
+
 def colorSel(pos):
     msg = choose + " "+ positions[pos]+ " " + color+" "+to_sort
     if os.name == 'nt':
@@ -81,6 +91,53 @@ def colorSel(pos):
 
     else:
         os.system("mpg321 "+ msg)
+
+## To do
+def move_order():
+    "Joseph do it here"
+    if os.name == 'nt':
+        pg.mixer.music.load(move_message)
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+    else:
+        os.system("mpg321 "+ move_message)
+
+def found_color():
+    "Joseph do it here"
+    if os.name == 'nt':
+        pg.mixer.music.load(found_color_message)
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+    else:
+        os.system("mpg321 "+ found_color_message)
+
+def apology():
+    "Joseph do it here"
+    if os.name == 'nt':
+        pg.mixer.music.load(apology_message)
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+    else:
+        os.system("mpg321 "+ apology_message)
+
+def task_finishedd():
+    "Joseph do it here"
+    if os.name == 'nt':
+        pg.mixer.music.load(task_finished_message)
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+    else:
+        os.system("mpg321 "+ task_finished_message)
+
+def error():
+    "Joseph do it here"
+    if os.name == 'nt':
+        pg.mixer.music.load(error_message)
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+    else:
+        os.system("mpg321 "+ error_message)
+
 
 def make_sentence(color, position , group, nb_shirts):
     res = ("mpg321 " if (os.name!='nt') else "")  + path + "color.mp3 " + colors[color] + " "
@@ -180,6 +237,8 @@ def make_sentence(color, position , group, nb_shirts):
         os.system(res)
 
     return res
+
+
 
 # make_sentence(color, position, group, nb_shirts)
 
