@@ -6,7 +6,7 @@ pg.mixer.init()
 pg.mixer.music.set_volume(1.0)
 
 
-mytext = 'Power on'
+mytext = 'color'
 path = "./audio_samples/"
 # Language in which you want to convert
 language = 'en'
@@ -15,18 +15,20 @@ language = 'en'
 # here we have marked slow=False. Which tells 
 # the module that the converted audio should 
 # have a high speed
-#myobj = gTTS(text=mytext, lang=language, slow=False)
+myobj = gTTS(text=mytext, lang=language, slow=False)
 
 # Saving the converted audio in a mp3 file named
 # welcome 
-#myobj.save(path + "PowerOn.mp3")
+myobj.save(path + "color_simple.mp3")
 
 # Playing the converted file
 
 # os.system("mpg321 "+path+"Left.mp3")
 
 # mpg321 ./audio_samples/color.mp3 ./audio_sample3s/color.mp3
-
+color = path + "color_simple.mp3"
+to_sort = path + "to_sort.mp3"
+choose = path + "Choose.mp3"
 start_message = path + "PowerOn.mp3"
 the = path + "the.mp3"
 left = path + "To_the_left_of.mp3"
@@ -70,6 +72,15 @@ def startMessage():
     else:
         os.system("mpg321 "+ start_message)
 
+def colorSel(pos):
+    msg = choose + " "+ positions[pos]+ " " + color+" "+to_sort
+    if os.name == 'nt':
+        pg.mixer.music.load(msg)
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+
+    else:
+        os.system("mpg321 "+ msg)
 
 def make_sentence(color, position , group, nb_shirts):
     res = ("mpg321 " if (os.name!='nt') else "")  + path + "color.mp3 " + colors[color] + " "
