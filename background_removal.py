@@ -8,11 +8,11 @@ from Segmentation import segmentation
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
 import Speech as sp
 
-# import bluetooth
 
-bd_addr = "00:11:22:33:44:55"  # Replace with the MAC address of the Bluetooth device you want to check
+#bd_addr = "00:11:22:33:44:55"  # Replace with the MAC address of the Bluetooth device you want to check
 
 bluetooth = True
+
 """
 result = bluetooth.lookup_name(bd_addr)
 if (result != None):
@@ -42,6 +42,7 @@ WHITE_THRESHOLD = 20
 
 HEARING_TIME = 2
 WAIT_TIME = 5
+SLEEP_TIME = 5
 
 # Text print parameters
 # font
@@ -207,7 +208,9 @@ if bluetooth and cap.isOpened():
                         list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                         index = list_tshirt_group2.index(tshirt)
                         frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
+                    time.sleep(SLEEP_TIME)
                     time_seconds = 0
+
 
             if len(original_keys) == 1 and flag_first_tshirt:
                 flag_first_tshirt = False
@@ -222,7 +225,9 @@ if bluetooth and cap.isOpened():
                     list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                     index = list_tshirt_group2.index(tshirt)
                     frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
+                time.sleep(SLEEP_TIME)
                 time_seconds = 0
+
 
             time_seconds = end - start
             cleaned = cv2.putText(cleaned, ('W/B Perc. : %.2f' % white_pixel_percentage), (900, 50), font,

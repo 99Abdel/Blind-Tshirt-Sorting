@@ -20,3 +20,5 @@ def recognise_speech():
             print("Sorry, I did not get that")
 
     return frase
+
+recognise_speech()
