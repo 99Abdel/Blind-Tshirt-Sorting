@@ -6,7 +6,7 @@ import time
 import audio as ad
 from Segmentation import segmentation
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
-import Speech as sp
+#import Speech as sp
 
 
 #bd_addr = "00:11:22:33:44:55"  # Replace with the MAC address of the Bluetooth device you want to check
@@ -34,17 +34,17 @@ color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
                   'gray': [[180, 18, 230], [0, 0, 40]]}
 
 RESOLUTION = 1920 * 1080
-UP_LIM = RESOLUTION * 0.3
-LOW_LIM = RESOLUTION * 0.01
+UP_LIM = 40
+LOW_LIM = 10
 
 N_FRAME = 2
 FRAME_TOLL = 10
 WHITE_THRESHOLD = 20
 
 HEARING_TIME = 2
-WAIT_TIME = 0
-SLEEP_TIME = 10
-
+WAIT_TIME = 5
+SLEEP_TIME = 5
+N_TSHIRTS = 3
 # Text print parameters
 # font
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -149,7 +149,6 @@ if bluetooth and cap.isOpened():
             if white_pixel_percentage > WHITE_THRESHOLD:
                 frame_list.append(white_pixel_percentage)
                 if len(frame_list) >= N_FRAME:
-
                     if abs(max(frame_list) - min(frame_list)) < FRAME_TOLL:
                         start_segmentation_text = 'F'
                         print("Start Segmentation")
@@ -159,10 +158,10 @@ if bluetooth and cap.isOpened():
                         high_c2, low_c2 = np.array(color_dict_HSV[color2][0]), np.array(color_dict_HSV[color2][1])
                         [color1_percentage, color2_percentage] = segmentation(hsv_frame, cleaned, low_c1, high_c1, low_c2, high_c2)
 
-                        if color1_percentage > 30 and color2_percentage < 10:
+                        if color1_percentage > UP_LIM and color2_percentage < LOW_LIM:
                             orange_tshirt_number += 1
                             color_name = color1 + str(orange_tshirt_number)
-                        elif color2_percentage > 30 and color1_percentage < 10:
+                        elif color2_percentage > UP_LIM and color1_percentage < LOW_LIM:
                             blue_tshirt_number += 1
                             color_name = color2 + str(blue_tshirt_number)
                         else:
@@ -184,7 +183,6 @@ if bluetooth and cap.isOpened():
                     else:
                         frame_list = []
             else:
-                ad.move_order()
                 frame_list = []
 
             end = time.time()
@@ -211,8 +209,11 @@ if bluetooth and cap.isOpened():
                         list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                         index = list_tshirt_group2.index(tshirt)
                         frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
-                    time.sleep(SLEEP_TIME)
-                    ad.ready()
+                    color1_percentage = 0
+                    color2_percentage = 0
+                    white_pixel_percentage = 0
+                    #time.sleep(SLEEP_TIME)                   
+                    #ad.ready()
                     time_seconds = 0
 
 
@@ -229,10 +230,12 @@ if bluetooth and cap.isOpened():
                     list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                     index = list_tshirt_group2.index(tshirt)
                     frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
-                time.sleep(SLEEP_TIME)
-                ad.Ready()
+                #time.sleep(SLEEP_TIME)
+                #ad.ready()
                 time_seconds = 0
-
+                color1_percentage = 0
+                color2_percentage = 0
+                white_pixel_percentage = 0
 
             time_seconds = end - start
             cleaned = cv2.putText(cleaned, ('W/B Perc. : %.2f' % white_pixel_percentage), (900, 50), font,
@@ -244,11 +247,12 @@ if bluetooth and cap.isOpened():
                                   thickness, cv2.LINE_AA)
             cleaned = cv2.putText(cleaned, start_segmentation_text, (1600, 110), font, 4, color, 3, cv2.LINE_AA)
             new_tshirt_dictionary = original_tshirt_dictionary.copy()
-            print('W/B Perc. : %.2f' % white_pixel_percentage + '   Time: %.2f' % time_seconds + color1 + ': %.2f' % color1_percentage + color2 + ': %.2f' % color2_percentage)
+            print('W/B Perc.: %.2f' % white_pixel_percentage + '   Time: %.2f  ' % time_seconds + color1 + ': %.2f  ' % color1_percentage + color2 + ': %.2f  ' % color2_percentage)
 
             if time_seconds > 0.5:
                 start_segmentation_text = ''
-
+            if time_seconds > 8 and time_seconds < 8.2:
+                ad.ready()
             index = -1
             for x in original_tshirt_dictionary.keys():
                 index += 1
@@ -267,9 +271,9 @@ if bluetooth and cap.isOpened():
             #cv2.imshow('frame2', cleaned)
             n_pixel = 0
             key = cv2.waitKey(20)
-            if key == ord('q') or (len(list_tshirt_group1) >= 4 and len(list_tshirt_group2) >= 4):
+            if key == ord('q') or (len(list_tshirt_group1) >= N_TSHIRTS and len(list_tshirt_group2) >= N_TSHIRTS):
 
-                # ADD success audio
+                ad.task_finished()
 
                 break
         else:
