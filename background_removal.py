@@ -21,6 +21,7 @@ else:
     print("Bluetooth device not found.")
 """
 
+
 color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
                   'white': [[180, 18, 255], [0, 0, 231]],
                   'red1': [[180, 255, 255], [159, 50, 70]],
@@ -41,8 +42,8 @@ FRAME_TOLL = 10
 WHITE_THRESHOLD = 20
 
 HEARING_TIME = 2
-WAIT_TIME = 5
-SLEEP_TIME = 5
+WAIT_TIME = 0
+SLEEP_TIME = 10
 
 # Text print parameters
 # font
@@ -151,6 +152,7 @@ if bluetooth and cap.isOpened():
 
                     if abs(max(frame_list) - min(frame_list)) < FRAME_TOLL:
                         start_segmentation_text = 'F'
+                        print("Start Segmentation")
                         # time.sleep(0.5)
                         start = time.time()
                         high_c1, low_c1 = np.array(color_dict_HSV[color1][0]), np.array(color_dict_HSV[color1][1])
@@ -182,6 +184,7 @@ if bluetooth and cap.isOpened():
                     else:
                         frame_list = []
             else:
+                ad.move_order()
                 frame_list = []
 
             end = time.time()
@@ -190,7 +193,7 @@ if bluetooth and cap.isOpened():
             new_keys = set(new_tshirt_dictionary.keys())
 
             if (len(original_keys) - len(new_keys)) == 1:
-                if time_seconds < WAIT_TIME and len(original_keys) != 1:
+                if time_seconds <= WAIT_TIME and len(original_keys) != 1:
                     original_tshirt_dictionary.popitem()
                     if color1 in color_name:
                         blue_tshirt_number -= 1
@@ -209,6 +212,7 @@ if bluetooth and cap.isOpened():
                         index = list_tshirt_group2.index(tshirt)
                         frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
                     time.sleep(SLEEP_TIME)
+                    ad.ready()
                     time_seconds = 0
 
 
@@ -226,6 +230,7 @@ if bluetooth and cap.isOpened():
                     index = list_tshirt_group2.index(tshirt)
                     frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
                 time.sleep(SLEEP_TIME)
+                ad.Ready()
                 time_seconds = 0
 
 
@@ -239,6 +244,7 @@ if bluetooth and cap.isOpened():
                                   thickness, cv2.LINE_AA)
             cleaned = cv2.putText(cleaned, start_segmentation_text, (1600, 110), font, 4, color, 3, cv2.LINE_AA)
             new_tshirt_dictionary = original_tshirt_dictionary.copy()
+            print('W/B Perc. : %.2f' % white_pixel_percentage + '   Time: %.2f' % time_seconds + color1 + ': %.2f' % color1_percentage + color2 + ': %.2f' % color2_percentage)
 
             if time_seconds > 0.5:
                 start_segmentation_text = ''
@@ -258,9 +264,9 @@ if bluetooth and cap.isOpened():
                 cleaned = cv2.putText(cleaned, text_to_print, org, font, fontScale, color, thickness, cv2.LINE_AA)
 
             # Display image
-            cv2.imshow('frame2', cleaned)
+            #cv2.imshow('frame2', cleaned)
             n_pixel = 0
-            key = cv2.waitKey(50)
+            key = cv2.waitKey(20)
             if key == ord('q') or (len(list_tshirt_group1) >= 4 and len(list_tshirt_group2) >= 4):
 
                 # ADD success audio

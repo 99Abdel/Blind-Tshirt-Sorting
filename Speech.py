@@ -9,7 +9,7 @@ hmm = model_path + "/en-us/en-us" # path to the HMM model
 lm = model_path + "/en-us/en-us.lm.bin" # path to the LM file
 dictd = model_path + "/en-us/cmudict-en-us.dict" # path to the dictionary
 
-<<<<<<< HEAD
+
 # Set the recognizer's parameters
 recognizer.set_kws("keyphrase_search", "oh mighty computer")
 recognizer.set_lmfile(lm)
@@ -37,6 +37,5 @@ while True:
 
 # Close the microphone
 microphone.close()
-=======
-    return frase
->>>>>>> 62ffef44ff8477225cc2f12b549ef9fffdfdbf14
+
+

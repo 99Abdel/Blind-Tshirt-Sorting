@@ -136,7 +136,7 @@ def error():
     else:
         os.system("mpg321 "+ path+"error.mp3")
 
-def Ready():
+def ready():
     if os.name == 'nt':
         pg.mixer.music.load(path+"ready.mp3")
         pg.mixer.music.play()
