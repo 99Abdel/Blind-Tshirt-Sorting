@@ -19,11 +19,11 @@ language = 'en'
 
 
 
-myobj = gTTS(text=mytext, lang=language, slow=False)
+# myobj = gTTS(text=mytext, lang=language, slow=False)
 
 # Saving the converted audio in a mp3 file named
 # welcome 
-myobj.save(path + "ready.mp3")
+# myobj.save(path + "ready.mp3")
 
 # Playing the converted file
 
@@ -251,4 +251,4 @@ def make_sentence(color, position , group, nb_shirts):
 # res = make_sentence("RED",1,1,3)
 # print(res)
 # os.system(res)
-Ready()
+# Ready()

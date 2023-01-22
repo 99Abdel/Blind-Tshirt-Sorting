@@ -11,10 +11,9 @@ _Course of Designing Mechatronic System Coordinated by Fabien Verité_
 
 ## Team
 
-[![Badge Marco]][marco] 
-[![Badge Andrea]][andrea]
-[![Badge Sofia]][sofia]
-[![Badge Federico]][federico]
+[![Badge Marco]][marco]
+[![Badge Abdelghani]][abdelghani]
+[![Badge Joseph]][joseph]
 
 <br>
 
@@ -27,16 +26,14 @@ colour and within each base colour by brightness._
   
 <!----------------------------------------------------------------------------->
 
-[andrea]: https://github.com/gianandry
 [marco]: https://github.com/marco-milanesi
-[sofia]: https://github.com/sofiatoss
-[federico]: https://github.com/fedichicco
+[abdelghani]: https://github.com/99Abdel
+[joseph]: https://github.com/JoJolM
 [license]: LICENSE
 
 <!---------------------------------{ Badges }---------------------------------->
 
 [badge license]: https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge
-[badge andrea]: https://img.shields.io/badge/Andrea_Campanelli-8a61c7?style=for-the-badge
 [badge marco]: https://img.shields.io/badge/Marco_Milanesi-4776c1?style=for-the-badge
-[badge sofia]: https://img.shields.io/badge/Sofia_Toscano-2930c1?style=for-the-badge
-[badge federico]: https://img.shields.io/badge/Federico_Scassola-9cf?style=for-the-badge
+[badge abdelghani]: https://img.shields.io/badge/Msaad_Abdelghani-2930c1?style=for-the-badge
+[badge joseph]: https://img.shields.io/badge/Joseph_Dittrick-9cf?style=for-the-badge
