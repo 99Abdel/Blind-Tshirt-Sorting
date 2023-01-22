@@ -6,7 +6,7 @@ pg.mixer.init()
 pg.mixer.music.set_volume(1.0)
 
 
-mytext = "An error has occurred, please repeat from the beginning"
+mytext = "Ready for the next tshirt"
 path = "./audio_samples/"
 # Language in which you want to convert
 language = 'en'
@@ -23,7 +23,7 @@ myobj = gTTS(text=mytext, lang=language, slow=False)
 
 # Saving the converted audio in a mp3 file named
 # welcome 
-myobj.save(path + "error.mp3")
+myobj.save(path + "ready.mp3")
 
 # Playing the converted file
 
@@ -136,6 +136,14 @@ def error():
     else:
         os.system("mpg321 "+ path+"error.mp3")
 
+def Ready():
+    if os.name == 'nt':
+        pg.mixer.music.load(path+"ready.mp3")
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+    else:
+        os.system("mpg321 "+ path+"ready.mp3")
+
 
 def make_sentence(color, position , group, nb_shirts):
     res = ("mpg321 " if (os.name!='nt') else "")  + path + "color.mp3 " + colors[color] + " "
@@ -243,4 +251,4 @@ def make_sentence(color, position , group, nb_shirts):
 # res = make_sentence("RED",1,1,3)
 # print(res)
 # os.system(res)
-# error()
+Ready()
