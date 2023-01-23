@@ -32,17 +32,17 @@ color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
                   'orange': [[50, 255, 255], [5, 50, 70]],
                   'gray': [[180, 18, 230], [0, 0, 40]]}
 
-RESOLUTION = 1920 * 1080
 UP_LIM = 40
 LOW_LIM = 10
 
 N_FRAME = 2
-FRAME_TOLL = 10
+FRAME_TOLL_UP = 12
+FRAME_TOLL_LOW = 1
 WHITE_THRESHOLD = 20
 
 HEARING_TIME = 2
 WAIT_TIME = 0
-SLEEP_TIME = 5
+SLEEP_TIME = 8
 N_TSHIRTS = 3
 # Text print parameters
 # font
@@ -62,16 +62,16 @@ list_tshirt_group1 = []
 list_tshirt_group2 = []
 
 # Open Camera
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+cap = cv2.VideoCapture(1) #, cv2.CAP_DSHOW)
+#cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
-frame_width = int(cap.get(3))
-frame_height = int(cap.get(4))
+#frame_width = int(cap.get(3))
+#frame_height = int(cap.get(4))
 
-size = (frame_width, frame_height)
+#size = (frame_width, frame_height)
 
-result = cv2.VideoWriter('./output_video/camera_video.avi', cv2.VideoWriter_fourcc(*'MJPG'), 10, size)
+#result = cv2.VideoWriter('./output_video/camera_video.avi', cv2.VideoWriter_fourcc(*'MJPG'), 10, size)
 
 segmentor = SelfiSegmentation()
 
@@ -138,6 +138,8 @@ if bluetooth and cap.isOpened():
         ret, frame_color = cap.read()
 
         if ret == True:
+            if white_pixel_percentage == 0:
+               frame_list = []
             # Convert frame to hsv
             hsv_frame = cv2.cvtColor(frame_color, cv2.COLOR_BGR2HSV)
             # Convert current frame to grayscale
@@ -153,7 +155,7 @@ if bluetooth and cap.isOpened():
             if white_pixel_percentage > WHITE_THRESHOLD:
                 frame_list.append(white_pixel_percentage)
                 if len(frame_list) >= N_FRAME:
-                    if abs(max(frame_list) - min(frame_list)) < FRAME_TOLL:
+                    if abs(max(frame_list) - min(frame_list)) < FRAME_TOLL_UP and abs(max(frame_list)-min(frame_list)) > FRAME_TOLL_LOW:
                         start_segmentation_text = 'F'
                         print("Start Segmentation")
                         # time.sleep(0.5)
@@ -214,6 +216,7 @@ if bluetooth and cap.isOpened():
                         index = list_tshirt_group2.index(tshirt)
                         frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
                     white_pixel_percentage = 0
+                    frame_list = []
                     time.sleep(SLEEP_TIME)
                     ad.ready()
                     time_seconds = 0
@@ -232,10 +235,11 @@ if bluetooth and cap.isOpened():
                     list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                     index = list_tshirt_group2.index(tshirt)
                     frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
+                frame_list = []
+                white_pixel_percentage = 0
                 time.sleep(SLEEP_TIME)
                 ad.ready()
                 time_seconds = 0
-                white_pixel_percentage = 0
 
             time_seconds = end - start
             cleaned = cv2.putText(cleaned, ('W/B Perc. : %.2f' % white_pixel_percentage), (900, 50), font,
@@ -267,9 +271,9 @@ if bluetooth and cap.isOpened():
                 text_to_print = 'Brightness: ' + ('%.2f' % original_tshirt_dictionary[x])
                 cleaned = cv2.putText(cleaned, text_to_print, org, font, fontScale, color, thickness, cv2.LINE_AA)
 
-            result.write(cleaned)
+            # result.write(cleaned)
             # Display image
-            cv2.imshow('frame2', cleaned)
+            # cv2.imshow('frame2', cleaned)
             n_pixel = 0
             key = cv2.waitKey(40)
             if  key == ord('q') or (len(list_tshirt_group1) >= N_TSHIRTS and len(list_tshirt_group2) >= N_TSHIRTS):
@@ -280,6 +284,6 @@ if bluetooth and cap.isOpened():
 
     # Release video object
     cap.release()
-    result.release()
+    # result.release()
     # Destroy all windows
     cv2.destroyAllWindows()
