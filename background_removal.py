@@ -8,7 +8,6 @@ from Segmentation import segmentation
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
 #import Speech as sp
 
-
 #bd_addr = "00:11:22:33:44:55"  # Replace with the MAC address of the Bluetooth device you want to check
 
 bluetooth = True
@@ -42,7 +41,7 @@ FRAME_TOLL = 10
 WHITE_THRESHOLD = 20
 
 HEARING_TIME = 2
-WAIT_TIME = 5
+WAIT_TIME = 0
 SLEEP_TIME = 5
 N_TSHIRTS = 3
 # Text print parameters
@@ -63,9 +62,16 @@ list_tshirt_group1 = []
 list_tshirt_group2 = []
 
 # Open Camera
-cap = cv2.VideoCapture(0)  # , cv2.CAP_DSHOW)
-# cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1080)
-# cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+frame_width = int(cap.get(3))
+frame_height = int(cap.get(4))
+
+size = (frame_width, frame_height)
+
+result = cv2.VideoWriter('./output_video/camera_video.avi', cv2.VideoWriter_fourcc(*'MJPG'), 10, size)
 
 segmentor = SelfiSegmentation()
 
@@ -117,16 +123,14 @@ def inital():
             color2 = sp.recognise_speech()
             time.sleep(HEARING_TIME)
 
-    return color1,color2
-
-
+    return color1, color2
 
 if bluetooth and cap.isOpened():
 
     ad.startMessage()
 
     # color1,color2 = inital()
-    color1,color2 = "blue","orange"
+    color1, color2 = "blue", "orange"
 
     while (cap.isOpened()):
         # vid_capture.read() methods returns a tuple, first element is a bool
@@ -209,11 +213,9 @@ if bluetooth and cap.isOpened():
                         list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                         index = list_tshirt_group2.index(tshirt)
                         frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
-                    color1_percentage = 0
-                    color2_percentage = 0
                     white_pixel_percentage = 0
-                    #time.sleep(SLEEP_TIME)                   
-                    #ad.ready()
+                    time.sleep(SLEEP_TIME)
+                    ad.ready()
                     time_seconds = 0
 
 
@@ -230,11 +232,9 @@ if bluetooth and cap.isOpened():
                     list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
                     index = list_tshirt_group2.index(tshirt)
                     frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
-                #time.sleep(SLEEP_TIME)
-                #ad.ready()
+                time.sleep(SLEEP_TIME)
+                ad.ready()
                 time_seconds = 0
-                color1_percentage = 0
-                color2_percentage = 0
                 white_pixel_percentage = 0
 
             time_seconds = end - start
@@ -242,7 +242,7 @@ if bluetooth and cap.isOpened():
                                   fontScale, color, thickness, cv2.LINE_AA)
             cleaned = cv2.putText(cleaned, ('Time: %.2f' % time_seconds), (900, 80), font, fontScale, color,
                                   thickness, cv2.LINE_AA)
-            cleaned = cv2.putText(cleaned, (color1 + ': %.2f' % color2_percentage + color2 + ': %.2f' % color1_percentage),
+            cleaned = cv2.putText(cleaned, (color1 + ': %.2f' % color1_percentage + color2 + ': %.2f' % color2_percentage),
                                   (900, 110), font, fontScale, color,
                                   thickness, cv2.LINE_AA)
             cleaned = cv2.putText(cleaned, start_segmentation_text, (1600, 110), font, 4, color, 3, cv2.LINE_AA)
@@ -251,8 +251,8 @@ if bluetooth and cap.isOpened():
 
             if time_seconds > 0.5:
                 start_segmentation_text = ''
-            if time_seconds > 8 and time_seconds < 8.2:
-                ad.ready()
+            #if time_seconds > 8 and time_seconds < 8.2:
+                #ad.ready()
             index = -1
             for x in original_tshirt_dictionary.keys():
                 index += 1
@@ -267,20 +267,19 @@ if bluetooth and cap.isOpened():
                 text_to_print = 'Brightness: ' + ('%.2f' % original_tshirt_dictionary[x])
                 cleaned = cv2.putText(cleaned, text_to_print, org, font, fontScale, color, thickness, cv2.LINE_AA)
 
+            result.write(cleaned)
             # Display image
-            #cv2.imshow('frame2', cleaned)
+            cv2.imshow('frame2', cleaned)
             n_pixel = 0
-            key = cv2.waitKey(20)
-            if key == ord('q') or (len(list_tshirt_group1) >= N_TSHIRTS and len(list_tshirt_group2) >= N_TSHIRTS):
-
+            key = cv2.waitKey(40)
+            if  key == ord('q') or (len(list_tshirt_group1) >= N_TSHIRTS and len(list_tshirt_group2) >= N_TSHIRTS):
                 ad.task_finished()
-
                 break
         else:
             break
 
     # Release video object
     cap.release()
-
+    result.release()
     # Destroy all windows
     cv2.destroyAllWindows()
