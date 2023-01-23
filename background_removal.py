@@ -36,7 +36,7 @@ color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
 UP_LIM = 30
 LOW_LIM = 10
 
-N_FRAME = 2
+N_FRAME = 5
 FRAME_TOLL_UP = 12
 FRAME_TOLL_LOW = 2
 WHITE_THRESHOLD = 20
@@ -63,9 +63,9 @@ list_tshirt_group1 = []
 list_tshirt_group2 = []
 
 # Open Camera
-cap = cv2.VideoCapture(0) #cv2.CAP_DSHOW)
-#cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
 #frame_width = int(cap.get(3))
 #frame_height = int(cap.get(4))
@@ -162,7 +162,7 @@ if bluetooth and cap.isOpened():
                         print("Start Segmentation")
                         # time.sleep(0.5)
                         start = time.time()
-                        [color1_percentage, color2_percentage] = segmentation(hsv_frame, frame_color, low_c1, high_c1, low_c2, high_c2)
+                        [color1_percentage, color2_percentage] = segmentation(hsv_frame, cleaned, low_c1, high_c1, low_c2, high_c2)
 
                         if color1_percentage > UP_LIM and color2_percentage < LOW_LIM:
                             orange_tshirt_number += 1
@@ -265,14 +265,12 @@ if bluetooth and cap.isOpened():
 
             cleaned = cv2.putText(cleaned, ('W/B Perc. : %.2f' % white_pixel_percentage), (900, 50), font,
                                   fontScale, color, thickness, cv2.LINE_AA)
-            cleaned = cv2.putText(cleaned, ('Time: %.2f' % time_seconds), (900, 80), font, fontScale, color,
-                                  thickness, cv2.LINE_AA)
-            cleaned = cv2.putText(cleaned, (color1 + ': %.2f' % color1_percentage + color2 + ': %.2f' % color2_percentage),
+            cleaned = cv2.putText(cleaned, (color1 + ': %.2f      ' % color1_percentage + color2 + ': %.2f' % color2_percentage),
                                   (900, 110), font, fontScale, color,
                                   thickness, cv2.LINE_AA)
             cleaned = cv2.putText(cleaned, start_segmentation_text, (1600, 110), font, 4, color, 3, cv2.LINE_AA)
             new_tshirt_dictionary = original_tshirt_dictionary.copy()
-            print('W/B Perc.: %.2f' % white_pixel_percentage + '   Time: %.2f  ' % time_seconds + color1 + ': %.2f  ' % color1_percentage + color2 + ': %.2f  ' % color2_percentage)
+            print('W/B Perc.: %.2f' % white_pixel_percentage + color2 + ': %.2f  ' % color1_percentage + color2 + ': %.2f  ' % color2_percentage)
 
             if time_seconds > 0.5:
                 start_segmentation_text = ''
@@ -294,7 +292,7 @@ if bluetooth and cap.isOpened():
 
             # result.write(cleaned)
             # Display image
-            #cv2.imshow('frame2', cleaned)
+            cv2.imshow('frame2', cleaned)
             n_pixel = 0
             key = cv2.waitKey(100)
             if  key == ord('q') or (len(list_tshirt_group1) >= N_TSHIRTS and len(list_tshirt_group2) >= N_TSHIRTS):
