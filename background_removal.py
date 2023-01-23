@@ -1,3 +1,4 @@
+
 import numpy as np
 import cv2
 from tshirt import Tshirt
@@ -32,7 +33,7 @@ color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
                   'orange': [[50, 255, 255], [5, 50, 70]],
                   'gray': [[180, 18, 230], [0, 0, 40]]}
 
-UP_LIM = 40
+UP_LIM = 30
 LOW_LIM = 10
 
 N_FRAME = 2
@@ -42,7 +43,7 @@ WHITE_THRESHOLD = 20
 
 HEARING_TIME = 2
 WAIT_TIME = 0
-SLEEP_TIME = 8
+SLEEP_TIME = 5
 N_TSHIRTS = 3
 # Text print parameters
 # font
@@ -214,13 +215,18 @@ if bluetooth and cap.isOpened():
                         frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
                     white_pixel_percentage = 0
                     frame_list = []
-                    while white_pixel_percentage > 0.5:
+                    count = 0
+                    while white_pixel_percentage > 1 or count < 15:
+                        ret, frame_color = cap.read()
                         BW_frame = segmentor.removeBG(frame_color, (0, 0, 0), threshold=0.7)
                         kernel = np.ones((2, 2), "uint8")
                         erosion = cv2.erode(BW_frame, kernel, iterations=1)
                         cleaned = erosion
                         # morphology.remove_small_objects(erosion, min_size=150, connectivity=150)
                         white_pixel_percentage = np.sum(cleaned) / np.size(cleaned)
+                        print("BW percentage", white_pixel_percentage)
+                        count += 1
+                    count  = 0
                     time.sleep(SLEEP_TIME)
                     ad.ready()
                     time_seconds = 0
@@ -239,13 +245,18 @@ if bluetooth and cap.isOpened():
                     index = list_tshirt_group2.index(tshirt)
                     frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
                 frame_list = []
-                while white_pixel_percentage > 0.5:
+                count = 0
+                while white_pixel_percentage > 1 or count < 15:
+                    ret, frame_color = cap.read()
                     BW_frame = segmentor.removeBG(frame_color, (0, 0, 0), threshold=0.7)
                     kernel = np.ones((2, 2), "uint8")
                     erosion = cv2.erode(BW_frame, kernel, iterations=1)
                     cleaned = erosion
                     # morphology.remove_small_objects(erosion, min_size=150, connectivity=150)
                     white_pixel_percentage = np.sum(cleaned) / np.size(cleaned)
+                    print("BW percentage: ",white_pixel_percentage)
+                    count += 1
+                count  = 0
                 time.sleep(SLEEP_TIME)
                 ad.ready()
                 time_seconds = 0
