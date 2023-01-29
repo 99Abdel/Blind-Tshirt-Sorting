@@ -6,7 +6,7 @@ from skimage import data, filters
 from skimage import morphology
 import time
 import pygame as pg
-from Segmentation import segmentation
+from segmentation import segmentize
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
 
 color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
@@ -52,7 +52,7 @@ while (cap.isOpened()):
         cleaned = morphology.remove_small_objects(erosion, min_size=150, connectivity=150)
         white_pixel_percentage = np.sum(cleaned) / np.size(cleaned)
 
-        [red_closed_npixel, blue_closed_npixel] = segmentation(hsv_frame, cleaned)
+        [red_closed_npixel, blue_closed_npixel] = segmentize(hsv_frame, cleaned,,
         print('Orange : %.2f' %red_closed_npixel + 'Blue : %.2f' %blue_closed_npixel)
         n_pixel = 0
         key = cv2.waitKey(150)

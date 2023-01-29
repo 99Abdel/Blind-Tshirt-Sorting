@@ -25,15 +25,14 @@ def show_frames(frame, c1_closed, c2_closed, f_name, c1_name, c2_name):
     cv2.imshow(c2_name, c2_closed)
 
 
-def segmentation(hsv_frame, frame,low_c1, high_c1, low_c2, high_c2):
+def segmentize(hsv_frame, frame, low_c1, high_c1, low_c2, high_c2):
 
     [c1, c1_closed, c1_closed_npixel] = color_frame_morpho(hsv_frame, frame, low_c1, high_c1, kernel)
     [c2, c2_closed, c2_closed_npixel] = color_frame_morpho(hsv_frame, frame, low_c2, high_c2, kernel)
 
-    # show_frames(frame, red_closed, blue_closed, "Frame", "Red", "Blue")
+    # show_frames(frame, c1_closed, c2_closed, "Frame", "COLOR1", "COLOR2")
 
-    orange_percentage = np.sum(c1_closed) / np.size(c1_closed)
-    blue_percentage = np.sum(c2_closed) / np.size(c2_closed)
+    c1_percentage = np.sum(c1_closed) / np.size(c1_closed)
+    c2_percentage = np.sum(c2_closed) / np.size(c2_closed)
 
-    return orange_percentage, blue_percentage
-
+    return c1_percentage, c2_percentage

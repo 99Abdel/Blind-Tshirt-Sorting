@@ -1,25 +1,10 @@
-
 import numpy as np
 import cv2
 from tshirt import Tshirt
-from skimage import morphology
 import time
 import audio as ad
-from Segmentation import segmentation
+from segmentation import segmentize
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
-#import Speech as sp
-
-#bd_addr = "00:11:22:33:44:55"  # Replace with the MAC address of the Bluetooth device you want to check
-
-bluetooth = True
-
-"""
-result = bluetooth.lookup_name(bd_addr)
-if (result != None):
-    print("Bluetooth device found with address ", result)
-else:
-    print("Bluetooth device not found.")
-"""
 
 
 color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
@@ -40,6 +25,9 @@ N_FRAME = 5
 FRAME_TOLL_UP = 12
 FRAME_TOLL_LOW = 2
 WHITE_THRESHOLD = 20
+THRESHOLD = 0.6
+MIN_RESET_THRESHOLD = 2.5
+MIN_RESET_ITERATIONS = 15
 
 HEARING_TIME = 2
 WAIT_TIME = 0
@@ -67,13 +55,6 @@ cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
-#frame_width = int(cap.get(3))
-#frame_height = int(cap.get(4))
-
-#size = (frame_width, frame_height)
-
-#result = cv2.VideoWriter('./output_video/camera_video.avi', cv2.VideoWriter_fourcc(*'MJPG'), 10, size)
-
 segmentor = SelfiSegmentation()
 
 white_pixel_percentage = 0
@@ -82,8 +63,8 @@ count_similar_frames = 0  # number of equal consecutive frames
 old_white_pixel_percentage = 0
 frame_list = []
 
-blue_tshirt_number = 0
-orange_tshirt_number = 0
+c1_tshirt_number = 0
+c2_tshirt_number = 0
 original_tshirt_dictionary = dict()
 new_tshirt_dictionary = dict()
 start_segmentation_text = ''
@@ -94,96 +75,148 @@ color2_percentage = 0
 start = time.time()
 # Loop over all frames
 
-colors = ['black', 'white','red', 'green', 'blue', 'yellow', 'purple', 'orange', 'gray']
+colors = ['black', 'white', 'red', 'green', 'blue', 'yellow', 'purple', 'orange', 'gray']
 
-def inital():
 
-    not_found = True
-    ad.first_color()
-    color1 = sp.recognise_speech()
-    time.sleep(HEARING_TIME)
+def white_perc(frame_col):
+    bw_frame = segmentor.removeBG(frame_col, (0, 0, 0), threshold=THRESHOLD)
+    kernel = np.ones((2, 2), "uint8")
+    clean = cv2.erode(bw_frame, kernel, iterations=1)
+    # morphology.remove_small_objects(erosion, min_size=150, connectivity=150)
+    white_pixel_perc = np.sum(clean) / np.size(clean)
 
-    while not_found:
-        if color1.lower() in colors:
-            ad.found_color()
-            not_found = False
-        else:
-            ad.apology()
-            color1 = sp.recognise_speech()
-            time.sleep(HEARING_TIME)
+    return white_pixel_perc, clean
 
-    color2 = sp.recognise_speech()
-    time.sleep(HEARING_TIME)
 
-    while not_found:
-        if color2.lower() in colors:
-            ad.found_color()
-            not_found = False
-        else:
-            ad.apology()
-            color2 = sp.recognise_speech()
-            time.sleep(HEARING_TIME)
+def sorting_instruction(tshirt_group, t_shirt):
+    tshirt_group.append(t_shirt)
+    tshirt_group = sorted(tshirt_group, key=lambda x: x.brightness)
+    index = tshirt_group.index(t_shirt)
+    frase = ad.make_sentence(t_shirt.main_colour[:-1], index, t_shirt.colour_group, len(tshirt_group) - 1)
+    return frase
 
-    return color1, color2
 
-if bluetooth and cap.isOpened():
+def background_reset(white_pixel_perc):
+    count = 0
+    while white_pixel_perc > MIN_RESET_THRESHOLD or count < MIN_RESET_ITERATIONS:
+        _, frame_col = cap.read()
+        white_pixel_perc, _ = white_perc(frame_col)
+        print("BW percentage: ", white_pixel_perc)
+        count += 1
+    time.sleep(SLEEP_TIME)
+    ad.ready()
+
+
+def print_info(clean, sst, c1, c2, c1_percentage, c2_percentage, wpp, original_t_d):
+    clean = cv2.putText(clean, ('W/B Perc. : %.2f' % wpp), (900, 50), font, fontScale, color,
+                        thickness, cv2.LINE_AA)
+    clean = cv2.putText(clean, (c1 + ': %.2f      ' % c1_percentage + c2 + ': %.2f' % c2_percentage),
+                        (900, 110), font, fontScale, color, thickness, cv2.LINE_AA)
+    clean = cv2.putText(clean, sst, (1600, 110), font, 4, color, 3, cv2.LINE_AA)
+    new_t_d = original_t_d.copy()
+    print('W/B Perc.: %.2f   ' % wpp + c1 + ': %.2f   ' % c1_percentage + c2 +
+          ': %.2f' % c2_percentage)
+    return new_t_d, clean
+
+
+def print_info_on_screen(original_t_d, clean):
+    index = 0
+    for x in original_t_d.keys():
+        index += 1
+        y_pos1 = 50 + 60 * index
+        org = (50, y_pos1)
+        text_to_print = 'Color Recognized: ' + x
+        # Using cv2.putText() method
+        clean = cv2.putText(clean, text_to_print, org, font, fontScale, color, thickness, cv2.LINE_AA)
+
+        y_pos2 = 80 + 60 * index
+        org = (50, y_pos2)
+        text_to_print = 'Brightness: ' + ('%.2f' % original_t_d[x])
+        clean = cv2.putText(clean, text_to_print, org, font, fontScale, color, thickness, cv2.LINE_AA)
+
+    return clean
+
+
+def recognise_color(c1, c2, c1_perc, c2_perc, c1_num, c2_num):
+    if c1_perc > UP_LIM and c2_perc < LOW_LIM:
+        c1_num += 1
+        name = c1 + str(c1_tshirt_number)
+    elif c2_perc > UP_LIM and c1_perc < LOW_LIM:
+        c2_num += 1
+        name = c2 + str(c2_num)
+    else:
+        name = 'None'
+
+    return name, c1_num, c2_num
+
+
+def create_tshirt(hsv, name, c1, c2, original_t_d):
+    if c1 in name:
+        t_shirt_temp = Tshirt(hsv[0, -1, 0], hsv[0, -1, 1], hsv[0, -1, 2], name, 0)
+    elif c2 in name:
+        t_shirt_temp = Tshirt(hsv[0, -1, 0], hsv[0, -1, 1], hsv[0, -1, 2], name, 1)
+
+    if name not in original_t_d.keys():
+        original_t_d[name] = t_shirt_temp.brightness
+
+    return t_shirt_temp, original_t_d
+
+
+def choose_color_and_sort(tshirt_t, name, c1, c2, g1, g2):
+    t_shirt = tshirt_t
+    if c1 in name:
+        sorting_instruction(g1, t_shirt)
+    elif c2 in name:
+        sorting_instruction(g2, t_shirt)
+
+
+if cap.isOpened():
 
     ad.startMessage()
 
-    # color1,color2 = inital()
     color1, color2 = "blue", "orange"
     high_c1, low_c1 = np.array(color_dict_HSV[color1][0]), np.array(color_dict_HSV[color1][1])
     high_c2, low_c2 = np.array(color_dict_HSV[color2][0]), np.array(color_dict_HSV[color2][1])
-    while (cap.isOpened()):
+
+
+    while cap.isOpened():
         # vid_capture.read() methods returns a tuple, first element is a bool
-        # and the second is frame
+        # and the second is framed
         ret, frame_color = cap.read()
 
         if ret == True:
             if white_pixel_percentage == 0:
-               frame_list = []
+                frame_list = []
             # Convert frame to hsv
             hsv_frame = cv2.cvtColor(frame_color, cv2.COLOR_BGR2HSV)
             # Convert current frame to grayscale
             frame = cv2.cvtColor(frame_color, cv2.COLOR_BGR2GRAY)
 
-            BW_frame = segmentor.removeBG(frame_color, (0, 0, 0), threshold=0.7)
-            kernel = np.ones((2, 2), "uint8")
-            erosion = cv2.erode(BW_frame, kernel, iterations=1)
-            cleaned = erosion
-            # morphology.remove_small_objects(erosion, min_size=150, connectivity=150)
-            white_pixel_percentage = np.sum(cleaned) / np.size(cleaned)
+            white_pixel_percentage, cleaned = white_perc(frame_color)
 
             if white_pixel_percentage > WHITE_THRESHOLD:
                 frame_list.append(white_pixel_percentage)
+
                 if len(frame_list) >= N_FRAME:
-                    if abs(max(frame_list) - min(frame_list)) < FRAME_TOLL_UP and abs(max(frame_list)-min(frame_list)) > FRAME_TOLL_LOW:
+
+                    if abs(max(frame_list) - min(frame_list)) < FRAME_TOLL_UP and abs(
+                            max(frame_list) - min(frame_list)) > FRAME_TOLL_LOW:
+
                         start_segmentation_text = 'F'
                         print("Start Segmentation")
                         # time.sleep(0.5)
                         start = time.time()
-                        [color1_percentage, color2_percentage] = segmentation(hsv_frame, cleaned, low_c1, high_c1, low_c2, high_c2)
-
-                        if color1_percentage > UP_LIM and color2_percentage < LOW_LIM:
-                            orange_tshirt_number += 1
-                            color_name = color1 + str(orange_tshirt_number)
-                        elif color2_percentage > UP_LIM and color1_percentage < LOW_LIM:
-                            blue_tshirt_number += 1
-                            color_name = color2 + str(blue_tshirt_number)
-                        else:
-                            color_name = 'None'
-
+                        [color1_percentage, color2_percentage] = segmentize(hsv_frame, cleaned, low_c1, high_c1, low_c2,
+                                                                            high_c2)
+                        color_name, c1_tshirt_number, c2_tshirt_number = recognise_color(color1,color2,color1_percentage,
+                                                                                         color2_percentage,c1_tshirt_number,
+                                                                                         c2_tshirt_number)
                         if color_name != 'None':
-                            # DO A MEAN OF THE HSV_FRAME COLUMNS BEFORE CREATING A TSHIRT CLASS.
-                            if color1 in color_name:
-                                tshirt_temp = Tshirt(hsv_frame[0, -1, 0], hsv_frame[0, -1, 1], hsv_frame[0, -1, 2], color_name, 0)
-                            elif color2 in color_name:
-                                tshirt_temp = Tshirt(hsv_frame[0, -1, 0], hsv_frame[0, -1, 1], hsv_frame[0, -1, 2], color_name, 1)
-
-                            if color_name not in original_tshirt_dictionary.keys():
-                                original_tshirt_dictionary[color_name] = tshirt_temp.brightness
+                            tshirt_temp, original_tshirt_dictionary = create_tshirt(hsv_frame, color_name, color1,
+                                                                                    color2, original_tshirt_dictionary)
 
                         frame_list = []
+
                     else:
                         frame_list = []
             else:
@@ -198,104 +231,37 @@ if bluetooth and cap.isOpened():
                 if time_seconds <= WAIT_TIME and len(original_keys) != 1:
                     original_tshirt_dictionary.popitem()
                     if color1 in color_name:
-                        blue_tshirt_number -= 1
+                        c1_tshirt_number -= 1
                     elif color2 in color_name:
-                        orange_tshirt_number -= 1
+                        c2_tshirt_number -= 1
                 elif time_seconds > WAIT_TIME and len(original_keys) != 1:
-                    tshirt = tshirt_temp
-                    if color1 in color_name:
-                        list_tshirt_group1.append(tshirt)
-                        list_tshirt_group1 = sorted(list_tshirt_group1, key=lambda x: x.brightness)
-                        index = list_tshirt_group1.index(tshirt)
-                        frase = ad.make_sentence(color1, index, tshirt.colour_group, len(list_tshirt_group1) - 1)
-                    elif color2 in color_name:
-                        list_tshirt_group2.append(tshirt)
-                        list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
-                        index = list_tshirt_group2.index(tshirt)
-                        frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
-                    white_pixel_percentage = 0
+                    choose_color_and_sort(tshirt_temp, color_name, color1, color2, list_tshirt_group1, list_tshirt_group2)
+                    background_reset(white_pixel_percentage)
                     frame_list = []
-                    count = 0
-                    while white_pixel_percentage > 1 or count < 15:
-                        ret, frame_color = cap.read()
-                        BW_frame = segmentor.removeBG(frame_color, (0, 0, 0), threshold=0.7)
-                        kernel = np.ones((2, 2), "uint8")
-                        erosion = cv2.erode(BW_frame, kernel, iterations=1)
-                        cleaned = erosion
-                        # morphology.remove_small_objects(erosion, min_size=150, connectivity=150)
-                        white_pixel_percentage = np.sum(cleaned) / np.size(cleaned)
-                        print("BW percentage", white_pixel_percentage)
-                        count += 1
-                    count  = 0
-                    time.sleep(SLEEP_TIME)
-                    ad.ready()
-                    time_seconds = 0
 
             if len(original_keys) == 1 and flag_first_tshirt:
                 flag_first_tshirt = False
-                tshirt = tshirt_temp
-                if color1 in color_name:
-                    list_tshirt_group1.append(tshirt)
-                    list_tshirt_group1 = sorted(list_tshirt_group1, key=lambda x: x.brightness)
-                    index = list_tshirt_group1.index(tshirt)
-                    frase = ad.make_sentence(color1, index, tshirt.colour_group, len(list_tshirt_group1) - 1)
-                elif color2 in color_name:
-                    list_tshirt_group2.append(tshirt)
-                    list_tshirt_group2 = sorted(list_tshirt_group2, key=lambda x: x.brightness)
-                    index = list_tshirt_group2.index(tshirt)
-                    frase = ad.make_sentence(color2, index, tshirt.colour_group, len(list_tshirt_group2) - 1)
+                choose_color_and_sort(tshirt_temp, color_name, color1, color2, list_tshirt_group1, list_tshirt_group2)
+                background_reset(white_pixel_percentage)
                 frame_list = []
-                count = 0
-                while white_pixel_percentage > 1 or count < 15:
-                    ret, frame_color = cap.read()
-                    BW_frame = segmentor.removeBG(frame_color, (0, 0, 0), threshold=0.7)
-                    kernel = np.ones((2, 2), "uint8")
-                    erosion = cv2.erode(BW_frame, kernel, iterations=1)
-                    cleaned = erosion
-                    # morphology.remove_small_objects(erosion, min_size=150, connectivity=150)
-                    white_pixel_percentage = np.sum(cleaned) / np.size(cleaned)
-                    print("BW percentage: ",white_pixel_percentage)
-                    count += 1
-                count  = 0
-                time.sleep(SLEEP_TIME)
-                ad.ready()
-                time_seconds = 0
 
             time_seconds = end - start
-
-            cleaned = cv2.putText(cleaned, ('W/B Perc. : %.2f' % white_pixel_percentage), (900, 50), font,
-                                  fontScale, color, thickness, cv2.LINE_AA)
-            cleaned = cv2.putText(cleaned, (color1 + ': %.2f      ' % color1_percentage + color2 + ': %.2f' % color2_percentage),
-                                  (900, 110), font, fontScale, color,
-                                  thickness, cv2.LINE_AA)
-            cleaned = cv2.putText(cleaned, start_segmentation_text, (1600, 110), font, 4, color, 3, cv2.LINE_AA)
-            new_tshirt_dictionary = original_tshirt_dictionary.copy()
-            print('W/B Perc.: %.2f' % white_pixel_percentage + color2 + ': %.2f  ' % color1_percentage + color2 + ': %.2f  ' % color2_percentage)
+            new_tshirt_dictionary, cleaned = print_info(cleaned, start_segmentation_text, color1, color2,
+                                                        color1_percentage, color2_percentage, white_pixel_percentage,
+                                                        original_tshirt_dictionary)
 
             if time_seconds > 0.5:
                 start_segmentation_text = ''
-            #if time_seconds > 8 and time_seconds < 8.2:
-                #ad.ready()
-            index = -1
-            for x in original_tshirt_dictionary.keys():
-                index += 1
-                y_pos1 = 50 + 60 * index
-                org = (50, y_pos1)
-                text_to_print = 'Color Recognized: ' + x
-                # Using cv2.putText() method
-                cleaned = cv2.putText(cleaned, text_to_print, org, font, fontScale, color, thickness, cv2.LINE_AA)
 
-                y_pos2 = 80 + 60 * index
-                org = (50, y_pos2)
-                text_to_print = 'Brightness: ' + ('%.2f' % original_tshirt_dictionary[x])
-                cleaned = cv2.putText(cleaned, text_to_print, org, font, fontScale, color, thickness, cv2.LINE_AA)
+            cleaned = print_info_on_screen(original_tshirt_dictionary, cleaned)
 
             # result.write(cleaned)
             # Display image
             cv2.imshow('frame2', cleaned)
             n_pixel = 0
             key = cv2.waitKey(100)
-            if  key == ord('q') or (len(list_tshirt_group1) >= N_TSHIRTS and len(list_tshirt_group2) >= N_TSHIRTS):
+
+            if key == ord('q') or (len(list_tshirt_group1) >= N_TSHIRTS and len(list_tshirt_group2) >= N_TSHIRTS):
                 ad.task_finished()
                 break
         else:
