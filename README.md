@@ -78,7 +78,6 @@ colour and within each base colour by brightness._
 <!-- GETTING STARTED -->
 ## Getting Started
 
-
 ### Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
@@ -88,7 +87,7 @@ This is an example of how to list things you need to use the software and how to
   ```
 
 ### Installation
-
+In the file `requirements.txt` 
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
