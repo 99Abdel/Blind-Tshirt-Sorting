@@ -79,16 +79,21 @@ colour and within each base colour by brightness._
 ## Getting Started
 
 ### Prerequisites
+Before installing the requirements it is advisable to:
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+**Install mpg123** 
+- npm
   ```sh
   npm install npm@latest -g
   ```
+**Set up SSH**
 
 ### Installation
-In the file `requirements.txt` 
-
+In the file _[requirements.txt](https://github.com/99Abdel/Blind-Tshirt-Sorting/blob/master/requirements.txt)_ are inserted the packages needed in the Raspberry PI to run the program.
+* intallation command
+  ```sh
+  pip install -r requirements.txt
+  ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -96,13 +101,17 @@ In the file `requirements.txt`
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+The code runs both on Windows and Rasbperry PI system. However, to increase the performances and reduce the computational power, comment the imshow ... 
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Acceleration of the system can be achieved by modifying certain parameters in the primary Python file, though this may result in a decreased robustness of the system as a whole. The tunable parameters include:
+- `UP_LIM` (*Deafault = 30*): percentage of colored pixel present in the analysed frame
+- `LOW_LIM` (*Deafault = 10*): percentage of colored pixel present in the analysed frame
+- `N_FRAME` (*Deafault = 5*): number of frames that have to be considered
+- `FRAME_TOLL_UP` (*Deafault = 12*):
+- `FRAME_TOLL_LOW` (*Deafault = 2*):
+- `WHITE_THRESHOLD` (*Deafault = 20*): percentage of pixel that have to become white (meaning that the t-shirt is in front of the camera) before the analysis is performed. 
 
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+* * * 
 
 
 <!-- CONTRIBUTING -->
@@ -135,22 +144,12 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
-
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* []()
-* []()
-* []()
+- Marco Milanesi - <a href = "mailto: marco.milanesi.99@gmail.com">marco.milanesi.99@gmail.com</a>
+- Abdelghani Msaad - <a href = "mailto: a.msaad@studenti.unibs.it">a.msaad@studenti.unibs.it</a>
+- Joseph Dittrick - <a href = "mailto: joseph.dittrick@etu.sorbonne-universite.fr">joseph.dittrick@etu.sorbonne-universite.fr</a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 
 <!----------------------------------------------------------------------------->
