@@ -1,10 +1,10 @@
 import pygame as pg
 from gtts import gTTS
 
-import os 
+import os
+
 pg.mixer.init()
 pg.mixer.music.set_volume(1.0)
-
 
 mytext = "Ready for the next tshirt"
 path = "./audio_samples/"
@@ -15,8 +15,6 @@ language = 'en'
 # here we have marked slow=False. Which tells 
 # the module that the converted audio should 
 # have a high speed
-
-
 
 
 # myobj = gTTS(text=mytext, lang=language, slow=False)
@@ -35,9 +33,8 @@ color = path + "color_simple.mp3"
 to_sort = path + "to_sort.mp3"
 choose = path + "Choose.mp3"
 
-selected =path + "selected.mp3"
+selected = path + "selected.mp3"
 start_message = path + "PowerOn.mp3"
-
 
 the = path + "the.mp3"
 left = path + "To_the_left_of.mp3"
@@ -73,80 +70,60 @@ colors = {
 # Right = path + "To_the_right_of.mp3"
 # Left = path + "To_the_left_of.mp3"
 
+
 def startMessage():
+    """
+    Power on message to tell the user that everithing is set up and he can start the sorting task
+    :return:
+    """
     if os.name == 'nt':
         pg.mixer.music.load(start_message)
         pg.mixer.music.play()
         pg.time.wait(1200)
 
     else:
-        os.system("mpg321 "+ start_message)
+        os.system("mpg321 " + start_message)
 
-
-def colorSel(pos):
-    msg = choose + " "+ positions[pos]+ " " + color+" "+to_sort
-    if os.name == 'nt':
-        pg.mixer.music.load(msg)
-        pg.mixer.music.play()
-        pg.time.wait(1200)
-
-    else:
-        os.system("mpg321 "+ msg)
-
-## To do
-def move_order():
-    if os.name == 'nt':
-        pg.mixer.music.load(path+"move.mp3")
-        pg.mixer.music.play()
-        pg.time.wait(1200)
-    else:
-        os.system("mpg321 "+ path+"move.mp3")
-
-def found_color(col):
-    found_color_message = the+" "+color+" "+selected+ " " +colors[col]
-    if os.name == 'nt':
-        pg.mixer.music.load(found_color_message)
-        pg.mixer.music.play()
-        pg.time.wait(1200)
-    else:
-        os.system("mpg321 "+ found_color_message)
-
-def apology():
-    sorry = path+"Sorry.mp3"
-    if os.name == 'nt':
-        pg.mixer.music.load(sorry)
-        pg.mixer.music.play()
-        pg.time.wait(1200)
-    else:
-        os.system("mpg321 "+ sorry)
 
 def task_finished():
+    """
+    Message to say to the user when the sorting is completely finished
+    :return: None
+    """
     if os.name == 'nt':
         pg.mixer.music.load(path + "Finished.mp3")
         pg.mixer.music.play()
         pg.time.wait(1200)
     else:
-        os.system("mpg321 "+ path + "Finished.mp3")
+        os.system("mpg321 " + path + "Finished.mp3")
 
-def error():
-    if os.name == 'nt':
-        pg.mixer.music.load(path+"error.mp3")
-        pg.mixer.music.play()
-        pg.time.wait(1200)
-    else:
-        os.system("mpg321 "+ path+"error.mp3")
 
 def ready():
+    """
+    message to say to give ok to the user the take another tshirt
+    :return: None
+    """
     if os.name == 'nt':
-        pg.mixer.music.load(path+"ready.mp3")
+        pg.mixer.music.load(path + "ready.mp3")
         pg.mixer.music.play()
         pg.time.wait(1200)
     else:
-        os.system("mpg321 "+ path+"ready.mp3")
+        os.system("mpg321 " + path + "ready.mp3")
 
 
-def make_sentence(color, position , group, nb_shirts):
-    res = ("mpg321 " if (os.name!='nt') else "")  + path + "color.mp3 " + colors[color] + " "
+def make_sentence(color, position, group, nb_shirts):
+    """
+    This function creates a string that tells the position of a T-shirt with the given color on a hanger.
+    it says it loud to the user playing concatenated mp3 files that are already generated in the audio_samples folder.
+
+    :param color: Color of the T-shirt.
+    :param position: Position of the T-shirt on the array group.
+    :param group: Group of T-shirts (0: left side of the hanger, 1: right side of the hanger).
+    :param nb_shirts: Total number of T-shirts already on the hanger.
+    :return: res (str): frase that is spelled to the user
+    """
+
+    res = ("mpg321 " if (os.name != 'nt') else "") + path + "color.mp3 " + colors[color] + " "
     position += 1
     # message for positioning
 
@@ -227,8 +204,10 @@ def make_sentence(color, position , group, nb_shirts):
             if position == 1:
                 res += left + " " + positions[3] + " " + tshirt + " " + start + " " + the + " " + Right
 
-    if os.name == 'nt':
-        #ws.PlaySound()
+    # we differentiate btween windows first case and linux second case.
+
+    if os.name == 'nt': # for windows
+        # ws.PlaySound()
         res_w = res.split()
         for sound in res_w:
             # if pg.mixer.music.get_busy():
@@ -236,19 +215,98 @@ def make_sentence(color, position , group, nb_shirts):
             pg.mixer.music.load(sound)
             pg.mixer.music.play()
             pg.time.wait(1200)
-
-            
-
-    else:
+    else: # for linux
         os.system(res)
 
     return res
 
-
-
+# to test the audio uncomment this lines
 # make_sentence(color, position, group, nb_shirts)
 
 # res = make_sentence("RED",1,1,3)
 # print(res)
 # os.system(res)
 # Ready()
+
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# ------------------- FROM HERE THE METHODS ARE NOT USED BUT THEY CAN BE USEFULL FOR FUTURE -------------------
+# ------------------------- IMPROVEMENTS WHERE MORE INTERACRION WITH THE USER WILL BE PRESENT --------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
+def colorSel(pos):
+    """
+
+    :param pos:
+    :return:
+    """
+    msg = choose + " " + positions[pos] + " " + color + " " + to_sort
+    if os.name == 'nt':
+        pg.mixer.music.load(msg)
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+
+    else:
+        os.system("mpg321 " + msg)
+
+
+## To do
+def move_order():
+    """
+    Tell the user that now he can move
+    :return: None
+    """
+    if os.name == 'nt':
+        pg.mixer.music.load(path + "move.mp3")
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+    else:
+        os.system("mpg321 " + path + "move.mp3")
+
+
+def found_color(col):
+    """
+    The speaker tell the user which color has in its hand
+    :param col: Color name
+    :return: None
+    """
+    found_color_message = the + " " + color + " " + selected + " " + colors[col]
+    if os.name == 'nt':
+        pg.mixer.music.load(found_color_message)
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+    else:
+        os.system("mpg321 " + found_color_message)
+
+
+def error():
+    """
+    error message to say to the user in order for him to repeat what he has said
+    :returns: None
+    """
+    if os.name == 'nt':
+        pg.mixer.music.load(path + "error.mp3")
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+    else:
+        os.system("mpg321 " + path + "error.mp3")
+
+
+def apology():
+    """
+    Affiliated to the error message tell the user politely to repeat its command
+    :return: None
+    """
+    sorry = path + "Sorry.mp3"
+    if os.name == 'nt':
+        pg.mixer.music.load(sorry)
+        pg.mixer.music.play()
+        pg.time.wait(1200)
+    else:
+        os.system("mpg321 " + sorry)
+
+# ----------------------------------------------------------------------------------------------------------------------
+# ------------------- TILL HERE THE PREVIOUS METHODS ARE NOT USED BUT THEY CAN BE USEFULL FOR FUTURE -------------------
+# ------------------------- IMPROVEMENTS WHERE MORE INTERACRION WITH THE USER WILL BE PRESENT --------------------------
+# ----------------------------------------------------------------------------------------------------------------------
