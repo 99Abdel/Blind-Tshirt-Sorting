@@ -123,17 +123,55 @@ In the file _[requirements.txt](https://github.com/99Abdel/Blind-Tshirt-Sorting/
   
 <!-- USAGE EXAMPLES -->
 ## Usage
-The code runs both on Windows and Rasbperry PI system. However, to increase the performances and reduce the computational power, comment the **cv2.imshow()** command in the **background_removal.py** script, at line 380. 
+The code runs both on Windows and Rasbperry PI system. However, to increase the performances and reduce the computational power, comment the **cv2.imshow()** command in the **main.py** script, at line 167. 
  Note that **The completion of this task is mandatory when operating on a Raspberry device, missing to do so will result in the script not functioning properly.**
 
-Acceleration of the system can be achieved by modifying certain parameters in the primary Python file, though this may result in a decreased robustness of the system as a whole. The tunable parameters include:
+Acceleration of the system can be achieved by modifying certain parameters in the primary Python file, though this may result in a decreased robustness of the system as a whole. The tunable parameters can be found in <a href=https://github.com/99Abdel/Blind-Tshirt-Sorting/blob/master/constants.py>`constatants.py`</a> include:
 - `UP_LIM` (*Deafault = 30*): percentage of colored pixel present in the analysed frame
 - `LOW_LIM` (*Deafault = 10*): percentage of colored pixel present in the analysed frame
-- `N_FRAME` (*Deafault = 5*): number of frames that have to be considered
-- `FRAME_TOLL_UP` (*Deafault = 12*):
-- `FRAME_TOLL_LOW` (*Deafault = 2*):
+```python
+if c1_perc > cs.UP_LIM and c2_perc < cs.LOW_LIM:
+        c1_num += 1
+        name = c1 + str(c1_num)
+    elif c2_perc > cs.UP_LIM and c1_perc < cs.LOW_LIM:
+        c2_num += 1
+        name = c2 + str(c2_num)
+    else:
+        name = 'None'
+```
+The parameters `UP_LIM` and `LOW_LIM` serve as thresholds in the function utilities.recognize_color. The code snippet determines the color of a t-shirt in an analyzed frame based on the number of pixels of color 1 and color 2. If the number of pixels of color 1 exceeds `UP_LIM` and the number of pixels of color 2 is less than `LOW_LIM`, the t-shirt is assigned color 1. Conversely, if the number of pixels of color 2 exceeds `LOW_LIM` and the number of pixels of color 1 is less than `UP_LIM`, the t-shirt is assigned color 2. Otherwise the color assigned is None.
+
+- `N_FRAME` (*Deafault = 5*): number of consequtive frames that have to be acquired to assure stability
+- `FRAME_TOLL_UP` (*Deafault = 12*) and `FRAME_TOLL_LOW` (*Deafault = 2*): are implemented to ensure that the t-shirt being analyzed is in a stationary position directly in front of the camera, rather than just temporarily passing by.
 - `WHITE_THRESHOLD` (*Deafault = 20*): percentage of pixel that have to become white (meaning that the t-shirt is in front of the camera) before the analysis is performed. 
 
+```python
+if white_pixel_percentage > cs.WHITE_THRESHOLD:
+                frame_list.append(white_pixel_percentage)  # Add the white pixel percentage to the frame list
+
+                # N_FRAME (minimum to assure stability, so that the tshirt is in fron of us and not just passing by)
+                if len(frame_list) >= cs.N_FRAME:
+                    # Check if the difference between the maximum and minimum values in the frame list is within the
+                    # specified tolerance range (minimum to assure stability, so that the tshirt is in fron of us and
+                    # not just passing by)
+                    if abs(max(frame_list) - min(frame_list)) < cs.FRAME_TOLL_UP and abs(
+                            max(frame_list) - min(frame_list)) > cs.FRAME_TOLL_LOW:
+```
+
+Moreover the colour mask for the segmentation can be modified in the same file:
+
+```python
+color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
+                  'white': [[180, 18, 255], [0, 0, 231]],
+                  'red1': [[180, 255, 255], [159, 50, 70]],
+                  'red2': [[9, 255, 255], [0, 50, 70]],
+                  'green': [[89, 255, 255], [36, 50, 70]],
+                  'blue': [[130, 255, 255], [70, 10, 2]],
+                  'yellow': [[35, 255, 255], [25, 50, 70]],
+                  'purple': [[158, 255, 255], [129, 50, 70]],
+                  'orange': [[50, 255, 255], [5, 50, 70]],
+                  'gray': [[180, 18, 230], [0, 0, 40]]}
+```
 * * * 
 
 
