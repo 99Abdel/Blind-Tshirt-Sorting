@@ -79,13 +79,23 @@ colour and within each base colour by brightness._
 ## Getting Started
 
 ### Prerequisites
-Before installing the requirements it is advisable to:
-
+Before installing the requirements for LINUX users this tasks has to be done:
 **Install mpg123** 
-- npm
   ```sh
-  npm install npm@latest -g
+  sudo apt-get update
+  sudo apt-get install mpg123 # or mpg321
+  pip3 install mpyg321
   ```
+**Install requirements** 
+  ```sh
+  pip install req.txt
+  ```
+*You may want to Install all requirements including inbuilt libraries of python*
+  ```sh
+  pip install requirements.txt
+  ```
+  
+
 **Set up SSH**
 
 ### Installation
