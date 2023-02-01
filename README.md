@@ -123,7 +123,8 @@ In the file _[requirements.txt](https://github.com/99Abdel/Blind-Tshirt-Sorting/
   
 <!-- USAGE EXAMPLES -->
 ## Usage
-The code runs both on Windows and Rasbperry PI system. However, to increase the performances and reduce the computational power, comment the ** cv2.imshow()** command in the **background_removal.py** script, at line 380. **THIS MUST BE DONE WHEN RUNNING ON RASPBERRY OTHERWISE THE SCRIPT WILL FAIL**
+The code runs both on Windows and Rasbperry PI system. However, to increase the performances and reduce the computational power, comment the **cv2.imshow()** command in the **background_removal.py** script, at line 380. 
+ Note that **The completion of this task is mandatory when operating on a Raspberry device, missing to do so will result in the script not functioning properly.**
 
 Acceleration of the system can be achieved by modifying certain parameters in the primary Python file, though this may result in a decreased robustness of the system as a whole. The tunable parameters include:
 - `UP_LIM` (*Deafault = 30*): percentage of colored pixel present in the analysed frame
