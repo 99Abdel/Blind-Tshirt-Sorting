@@ -72,7 +72,6 @@ pigpio==1.78
 Pillow==9.4.0
 protobuf==3.20.3
 psutil==5.8.0
-PyBluez==0.23
 pycairo==1.16.2
 pycups==2.0.1
 pygame==1.9.6
