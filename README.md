@@ -86,14 +86,6 @@ Before installing the requirements for LINUX users this tasks has to be done:
   sudo apt-get install mpg123 # or mpg321
   pip3 install mpyg321
   ```
-**Install requirements** 
-  ```sh
-  pip install req.txt
-  ```
-*You may want to Install all requirements including inbuilt libraries of python*
-  ```sh
-  pip install requirements.txt
-  ```
   
 
 **Set up SSH**
@@ -101,6 +93,12 @@ Before installing the requirements for LINUX users this tasks has to be done:
 ### Installation
 In the file _[requirements.txt](https://github.com/99Abdel/Blind-Tshirt-Sorting/blob/master/requirements.txt)_ are inserted the packages needed in the Raspberry PI to run the program.
 * intallation command
+  
+**Install requirements** 
+  ```sh
+  pip install -r req.txt
+  ```
+*You may want to Install all requirements including inbuilt libraries of python*
   ```sh
   pip install -r requirements.txt
   ```
