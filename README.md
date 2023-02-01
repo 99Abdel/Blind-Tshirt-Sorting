@@ -88,28 +88,36 @@ Before installing the requirements for LINUX users this tasks has to be done:
   ```
   
 
-**Set up SSH**
-
 ### Installation
 In the file _[requirements.txt](https://github.com/99Abdel/Blind-Tshirt-Sorting/blob/master/requirements.txt)_ are inserted the packages needed in the Raspberry PI to run the program.
 * intallation command
-  
-**Install requirements** 
-  ```sh
-  pip install -r req.txt
-  ```
-*You may want to Install all requirements including inbuilt libraries of python*
   ```sh
   pip install -r requirements.txt
+  ```
+* You may want to Install just the requirements of this package
+  ```sh
+  pip install -r req.txt
+  sudo apt install openssh-server
   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+  **Set up SSH**
+  * If you are a linux user you need to download this package:
+  ```sh
+  sudo apt install openssh-server
+  ```
+  
+  * Then log in via terminal with the command:
+  ```sh
+  ssh "username of raspberry"
+  password: "password"
+  ```
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-The code runs both on Windows and Rasbperry PI system. However, to increase the performances and reduce the computational power, comment the imshow ... 
+The code runs both on Windows and Rasbperry PI system. However, to increase the performances and reduce the computational power, comment the **imshow()** command in the **background_removal.py** script, at line 240. **THIS MUST BE DONE WHEN RUNNING ON RASPBERRY OTHERWISE THE SCRIPT WILL FAIL**
 
 Acceleration of the system can be achieved by modifying certain parameters in the primary Python file, though this may result in a decreased robustness of the system as a whole. The tunable parameters include:
 - `UP_LIM` (*Deafault = 30*): percentage of colored pixel present in the analysed frame
