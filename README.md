@@ -218,11 +218,17 @@ Distributed under the MIT License. See <a href=https://github.com/99Abdel/Blind-
 
 
 
+# Documents
+<a href="https://github.com/99Abdel/Blind-Tshirt-Sorting/blob/master/documents/Presentation.pdf">Power Point Presentation</a>
+  
 
+<img src="https://user-images.githubusercontent.com/47824890/216100170-71d47395-1f94-4e28-b091-b1c465cf2f9a.png" data-canonical-src="https://user-images.githubusercontent.com/47824890/216100170-71d47395-1f94-4e28-b091-b1c465cf2f9a.png" width="50%"/> 
 
-| Power Point Presentation | Flyer |
-|:------:|:------------:|
-| | |
+<a href="https://github.com/99Abdel/Blind-Tshirt-Sorting/blob/master/documents/Flyer.pdf">Flyer</a>
+
+<img src="https://user-images.githubusercontent.com/47824890/216100424-7479257e-0df7-44f8-b587-aab998dfe962.png" data-canonical-src="https://user-images.githubusercontent.com/47824890/216100424-7479257e-0df7-44f8-b587-aab998dfe962.png" width="60%"/>
+
+  
 
 
 <!----------------------------------------------------------------------------->
