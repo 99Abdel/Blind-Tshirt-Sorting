@@ -97,24 +97,30 @@ In the file _[requirements.txt](https://github.com/99Abdel/Blind-Tshirt-Sorting/
 * You may want to Install just the requirements of this package
   ```sh
   pip install -r req.txt
-  sudo apt install openssh-server
   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
   **Set up SSH**
-  * If you are a linux user you need to download this package:
+  **Linux Users**
+  * Download this package:
   ```sh
   sudo apt install openssh-server
   ```
   
   * Then log in via terminal with the command:
   ```sh
-  ssh "username of raspberry"
+  ssh "username of raspberry"   ex:name@namepi
   password: "password"
   ```
+  
+  **Windows Users**
+  * Download PuTTY
+  
+  * Then log in via PuTTY:
+    insert the full username: name@namepi
 
-
+  
 <!-- USAGE EXAMPLES -->
 ## Usage
 The code runs both on Windows and Rasbperry PI system. However, to increase the performances and reduce the computational power, comment the **imshow()** command in the **background_removal.py** script, at line 240. **THIS MUST BE DONE WHEN RUNNING ON RASPBERRY OTHERWISE THE SCRIPT WILL FAIL**
