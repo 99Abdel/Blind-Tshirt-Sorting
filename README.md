@@ -54,8 +54,8 @@ _Course of Designing Mechatronic System Coordinated by Fabien Verité_
 <div align = center>
 <img src="https://user-images.githubusercontent.com/47824890/213506874-16201128-3250-4c21-adf6-4f93361fd6d3.png" data-canonical-src="https://user-images.githubusercontent.com/47824890/213506874-16201128-3250-4c21-adf6-4f93361fd6d3.png" width="60%"/>
 
- _Pilots must take the colours from the clothesline on the left and hang them on the clothesline on the right. At the end of the task the colours must be sorted by base 
-colour and within each base colour by brightness._
+ _Pilots must take the colours from the clothesline on the left and hang them on the clothesline on the right. At the end of the task the colours must be sorted by base colour and within each base colour by brightness.
+ Our proposed solution is a standalone vision system, comprising of a Raspberry Pi 3B as the central processing unit, a power bank for power supply, a vision camera for image capture, and a Bluetooth speaker or headphones for audio output. The system is housed in a 3D-printed case with a belt for waist-worn portability._
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
