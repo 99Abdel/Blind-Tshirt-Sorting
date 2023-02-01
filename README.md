@@ -120,7 +120,13 @@ In the file _[requirements.txt](https://github.com/99Abdel/Blind-Tshirt-Sorting/
   * Then log in via PuTTY:
     insert the full username: name@namepi
 
-  
+
+## Run the code
+In order to run the code the file <a href=https://github.com/99Abdel/Blind-Tshirt-Sorting/blob/master/main.py>`main.py`</a> has to be launched. Once you are in the same file folder you can run it using 
+ ```sh 
+ python main.py
+  ```
+ * * * 
 <!-- USAGE EXAMPLES -->
 ## Usage
 The code runs both on Windows and Rasbperry PI system. However, to increase the performances and reduce the computational power, comment the **cv2.imshow()** command in the **main.py** script, at line 167. 
