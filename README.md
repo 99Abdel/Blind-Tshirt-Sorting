@@ -139,7 +139,7 @@ if c1_perc > cs.UP_LIM and c2_perc < cs.LOW_LIM:
     else:
         name = 'None'
 ```
-The parameters `UP_LIM` and `LOW_LIM` serve as thresholds in the function utilities.recognize_color. The code snippet determines the color of a t-shirt in an analyzed frame based on the number of pixels of color 1 and color 2. If the number of pixels of color 1 exceeds `UP_LIM` and the number of pixels of color 2 is less than `LOW_LIM`, the t-shirt is assigned color 1. Conversely, if the number of pixels of color 2 exceeds `LOW_LIM` and the number of pixels of color 1 is less than `UP_LIM`, the t-shirt is assigned color 2. Otherwise the color assigned is None.
+The parameters `UP_LIM` and `LOW_LIM` serve as thresholds in the function `utilities.recognize_color`. The code snippet determines the color of a t-shirt in an analyzed frame based on the number of pixels of color 1 and color 2. If the number of pixels of color 1 exceeds `UP_LIM` and the number of pixels of color 2 is less than `LOW_LIM`, the t-shirt is assigned color 1. Conversely, if the number of pixels of color 2 exceeds `LOW_LIM` and the number of pixels of color 1 is less than `UP_LIM`, the t-shirt is assigned color 2. Otherwise the color assigned is None.
 
 - `N_FRAME` (*Deafault = 5*): number of consequtive frames that have to be acquired to assure stability
 - `FRAME_TOLL_UP` (*Deafault = 12*) and `FRAME_TOLL_LOW` (*Deafault = 2*): are implemented to ensure that the t-shirt being analyzed is in a stationary position directly in front of the camera, rather than just temporarily passing by.
